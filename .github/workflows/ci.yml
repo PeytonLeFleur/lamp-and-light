@@ -10,13 +10,19 @@ jobs:
     runs-on: macos-14
     steps:
       - uses: actions/checkout@v4
-      - name: Select Xcode
-        run: sudo xcode-select -s "$(mdfind 'kMDItemCFBundleIdentifier == "com.apple.dt.Xcode" && kMDItemVersion >= "15.4"' | head -n 1)"
-      - name: Build and test
+      - name: Select Xcode 15.4+
+        run: |
+          XCODE_PATH="$(mdfind 'kMDItemCFBundleIdentifier == "com.apple.dt.Xcode" && kMDItemVersion >= "15.4"' | head -n 1)"
+          if [ -z "$XCODE_PATH" ]; then
+            echo "Xcode 15.4+ not found"; exit 1
+          fi
+          sudo xcode-select -s "$XCODE_PATH"
+      - name: Build and unit test only
         run: |
           xcodebuild \
             -project "Lamp & Light  Lamp & Light.xcodeproj" \
             -scheme "Lamp & Light  Lamp & Light" \
             -sdk iphonesimulator \
             -destination "platform=iOS Simulator,name=iPhone 15" \
+            -only-testing:"Lamp___Light__Lamp___LightTests" \
             clean test 

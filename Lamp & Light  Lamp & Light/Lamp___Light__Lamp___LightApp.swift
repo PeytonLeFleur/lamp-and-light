@@ -19,6 +19,7 @@ struct Lamp___Light__Lamp___LightApp: App {
         CrashReporting.start()
         Analytics.start()
         BackgroundTasksManager.register()
+        assert(BackgroundTasksManager.refreshID == "com.titanleadgen.lampandlight.refresh", "BG task ID mismatch with Info.plist")
     }
 
     var body: some Scene {
