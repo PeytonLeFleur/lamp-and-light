@@ -4,6 +4,13 @@ import CoreData
 class PlanService: ObservableObject {
     private let scriptureStore = ScriptureStore()
 
+    static func generateOrFetchToday(context: NSManagedObjectContext, profile: Profile) async -> DailyPlan {
+        if let existing = PlanRefresher.existingPlan(context: context, profile: profile) {
+            return existing
+        }
+        return await PlanService().generateTodayPlan(context: context, profile: profile)
+    }
+
     func generateTodayPlan(context: NSManagedObjectContext, profile: Profile) async -> DailyPlan {
         let today = Calendar.current.startOfDay(for: Date())
         let fetchRequest: NSFetchRequest<DailyPlan> = DailyPlan.fetchRequest()

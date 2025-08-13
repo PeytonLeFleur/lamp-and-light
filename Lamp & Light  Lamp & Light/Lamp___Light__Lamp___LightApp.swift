@@ -6,12 +6,20 @@
 //
 
 import SwiftUI
+import BackgroundTasks
 
 @main
 struct Lamp___Light__Lamp___LightApp: App {
     let persistenceController = PersistenceController.shared
     @State private var showOnboarding = !UserDefaults.standard.bool(forKey: "onboarded")
     @StateObject private var purchaseManager = PurchaseManager.shared
+    @Environment(\.scenePhase) private var scenePhase
+
+    init() {
+        CrashReporting.start()
+        Analytics.start()
+        BackgroundTasksManager.register()
+    }
 
     var body: some Scene {
         WindowGroup {
@@ -50,6 +58,11 @@ struct Lamp___Light__Lamp___LightApp: App {
             .environment(\.managedObjectContext, persistenceController.container.viewContext)
             .sheet(isPresented: $showOnboarding) { OnboardingView() }
             .task { await purchaseManager.load() }
+        }
+        .onChange(of: scenePhase) { phase in
+            if phase == .background {
+                BackgroundTasksManager.scheduleDaily()
+            }
         }
     }
 }

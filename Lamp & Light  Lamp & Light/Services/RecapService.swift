@@ -45,6 +45,7 @@ enum RecapService {
         recap.profile = profile
         try context.save()
         Log.info("Generated recap for week starting \(weekStart)")
+        Analytics.track("recap_generated")
         return recap
     }
 
