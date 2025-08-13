@@ -31,8 +31,8 @@ struct PaywallView: View {
                 }
 
                 VStack(spacing: 6) {
-                    NavigationLink("Terms of Use") { LegalView(kind: .terms) }
-                    NavigationLink("Privacy Policy") { LegalView(kind: .privacy) }
+                    NavigationLink("Terms of Use") { LegalView() }
+                    NavigationLink("Privacy Policy") { LegalView() }
                     Text(pm.statusText).font(AppFont.caption()).foregroundColor(.secondary)
                 }.padding(.top, 4)
 

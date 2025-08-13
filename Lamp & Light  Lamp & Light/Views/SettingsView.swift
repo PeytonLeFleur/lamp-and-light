@@ -35,6 +35,13 @@ struct SettingsView: View {
                             }
                         }.card()
                         
+                        // About & Legal
+                        VStack(alignment: .leading, spacing: 10) {
+                            Badge(text: "About & Legal")
+                            NavigationLink("About Lamp & Light") { AboutView() }
+                            NavigationLink("Terms, Privacy, Disclaimer") { LegalView() }
+                        }.card()
+                        
                         // Profile Information Section
                         VStack(alignment: .leading, spacing: 16) {
                             Badge(text: "Profile Information", color: AppColor.primaryGreen)

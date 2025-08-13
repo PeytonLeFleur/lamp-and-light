@@ -15,7 +15,7 @@ struct RecapView: View {
                 if let recap = recap {
                     ScrollView {
                         VStack(alignment: .leading, spacing: 16) {
-                            Text(recap.recapMD ?? "")
+                            Text((recap.recapMD ?? "") + "\n\nText KJV Public Domain")
                                 .font(AppFont.body())
                                 .frame(maxWidth: .infinity, alignment: .leading)
                                 .padding(.horizontal, 4)
