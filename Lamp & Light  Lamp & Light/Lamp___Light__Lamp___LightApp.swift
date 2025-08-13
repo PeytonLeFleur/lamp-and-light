@@ -13,8 +13,32 @@ struct Lamp___Light__Lamp___LightApp: App {
 
     var body: some Scene {
         WindowGroup {
-            ContentView()
-                .environment(\.managedObjectContext, persistenceController.container.viewContext)
+            TabView {
+                TodayView()
+                    .tabItem {
+                        Image(systemName: "sun.max")
+                        Text("Today")
+                    }
+                
+                JournalView()
+                    .tabItem {
+                        Image(systemName: "book")
+                        Text("Journal")
+                    }
+                
+                TimelineView()
+                    .tabItem {
+                        Image(systemName: "clock")
+                        Text("Timeline")
+                    }
+                
+                SettingsView()
+                    .tabItem {
+                        Image(systemName: "gear")
+                        Text("Settings")
+                    }
+            }
+            .environment(\.managedObjectContext, persistenceController.container.viewContext)
         }
     }
 }

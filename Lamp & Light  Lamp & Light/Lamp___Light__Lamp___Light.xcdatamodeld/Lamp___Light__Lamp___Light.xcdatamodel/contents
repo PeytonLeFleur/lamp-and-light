@@ -1,9 +1,51 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="1" systemVersion="11A491" minimumToolsVersion="Automatic" sourceLanguage="Swift" usedWithCloudKit="false" userDefinedModelVersionIdentifier="">
-    <entity name="Item" representedClassName="Item" syncable="YES" codeGenerationType="class">
-        <attribute name="timestamp" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="22522" systemVersion="24.5.0" minimumToolsVersion="Automatic" sourceLanguage="Swift" usedWithCloudKit="YES" userDefinedModelVersionIdentifier="">
+    <entity name="AnsweredPrayer" representedClassName="AnsweredPrayer" syncable="YES" codeGenerationType="class">
+        <attribute name="createdAt" optional="YES" attributeType="Date" defaultValueString="now" usesScalarValueType="NO"/>
+        <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="note" optional="YES" attributeType="String"/>
+        <relationship name="entry" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="Entry" inverseName="answered" inverseEntity="Entry"/>
+        <relationship name="profile" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="Profile" inverseName="answeredPrayers" inverseEntity="Profile"/>
     </entity>
-    <elements>
-        <element name="Item" positionX="-63" positionY="-18" width="128" height="44"/>
-    </elements>
+    <entity name="DailyPlan" representedClassName="DailyPlan" syncable="YES" codeGenerationType="class">
+        <attribute name="application" optional="YES" attributeType="String" defaultValueString="A short reflection on this passage for today."/>
+        <attribute name="challenge" optional="YES" attributeType="String" defaultValueString="Spend five quiet minutes praying through this passage."/>
+        <attribute name="crossrefs" optional="YES" attributeType="Transformable" valueTransformerName="NSSecureUnarchiveFromData" customClassName="[String]"/>
+        <attribute name="day" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="prayer" optional="YES" attributeType="String" defaultValueString="Lord, help me trust you and walk in your word today. Amen."/>
+        <attribute name="scriptureRef" optional="YES" attributeType="String" defaultValueString="Psalm 46:1-3"/>
+        <attribute name="scriptureText" optional="YES" attributeType="String" defaultValueString="God is our refuge and strength, a very present help in trouble."/>
+        <attribute name="status" optional="YES" attributeType="String" defaultValueString="active"/>
+        <relationship name="profile" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="Profile" inverseName="dailyPlans" inverseEntity="Profile"/>
+    </entity>
+    <entity name="Entry" representedClassName="Entry" syncable="YES" codeGenerationType="class">
+        <attribute name="content" optional="YES" attributeType="String" defaultValueString=""/>
+        <attribute name="createdAt" optional="YES" attributeType="Date" defaultValueString="now" usesScalarValueType="NO"/>
+        <attribute name="emotion" optional="YES" attributeType="String"/>
+        <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="kind" optional="YES" attributeType="String" defaultValueString="journal"/>
+        <attribute name="meta" optional="YES" attributeType="Transformable" valueTransformerName="NSSecureUnarchiveFromData" customClassName="[String: Any]"/>
+        <attribute name="tags" optional="YES" attributeType="Transformable" valueTransformerName="NSSecureUnarchiveFromData" customClassName="[String]"/>
+        <relationship name="answered" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="AnsweredPrayer" inverseName="entry" inverseEntity="AnsweredPrayer"/>
+        <relationship name="profile" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="Profile" inverseName="entries" inverseEntity="Profile"/>
+    </entity>
+    <entity name="Profile" representedClassName="Profile" syncable="YES" codeGenerationType="class">
+        <attribute name="createdAt" optional="YES" attributeType="Date" defaultValueString="now" usesScalarValueType="NO"/>
+        <attribute name="denomination" optional="YES" attributeType="String"/>
+        <attribute name="displayName" optional="YES" attributeType="String"/>
+        <attribute name="goals" optional="YES" attributeType="String"/>
+        <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <relationship name="answeredPrayers" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="AnsweredPrayer" inverseName="profile" inverseEntity="AnsweredPrayer"/>
+        <relationship name="dailyPlans" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="DailyPlan" inverseName="profile" inverseEntity="DailyPlan"/>
+        <relationship name="entries" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="Entry" inverseName="profile" inverseEntity="Entry"/>
+        <relationship name="weeklyRecaps" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="WeeklyRecap" inverseName="profile" inverseEntity="WeeklyRecap"/>
+    </entity>
+    <entity name="WeeklyRecap" representedClassName="WeeklyRecap" syncable="YES" codeGenerationType="class">
+        <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="metrics" optional="YES" attributeType="Transformable" valueTransformerName="NSSecureUnarchiveFromData" customClassName="[String: Any]"/>
+        <attribute name="recapMD" optional="YES" attributeType="String" defaultValueString="Weekly recap"/>
+        <attribute name="weekStart" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <relationship name="profile" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="Profile" inverseName="weeklyRecaps" inverseEntity="Profile"/>
+    </entity>
 </model>
