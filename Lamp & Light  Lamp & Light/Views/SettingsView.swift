@@ -5,6 +5,7 @@ import UserNotifications
 
 struct SettingsView: View {
     @Environment(\.managedObjectContext) private var viewContext
+    @FetchRequest(sortDescriptors: []) private var profiles: FetchedResults<Profile>
     @State private var profile: Profile?
     @State private var displayName = ""
     @State private var denomination = ""
@@ -15,6 +16,8 @@ struct SettingsView: View {
     @State private var shareImage: UIImage?
     @State private var notifHour = 6
     @State private var notifMinute = 0
+    @State private var exportURL: URL?
+    @State private var showFileShare = false
     
     var body: some View {
         NavigationView {
@@ -119,7 +122,21 @@ struct SettingsView: View {
                             Badge(text: "Data Management", color: AppColor.sky)
                             
                             VStack(spacing: 12) {
-                                PillButton(title: "Export My Data", style: .secondary, systemImage: "square.and.arrow.up") {
+                                PillButton(title: "Export My Data (File)", style: .secondary, systemImage: "square.and.arrow.up.on.square") {
+                                    guard let p = profile else { return }
+                                    do {
+                                        exportURL = try BackupService.exportAll(context: viewContext, profile: p)
+                                        showFileShare = true
+                                        UINotificationFeedbackGenerator().notificationOccurred(.success)
+                                    } catch {
+                                        Log.error("Export error \(error.localizedDescription)")
+                                    }
+                                }
+                                .sheet(isPresented: $showFileShare) {
+                                    if let url = exportURL { ShareLink(item: url) }
+                                }
+                                
+                                PillButton(title: "Export My Data (Inline JSON)", style: .secondary, systemImage: "square.and.arrow.up") {
                                     exportUserData()
                                 }
                                 
@@ -132,35 +149,20 @@ struct SettingsView: View {
                         }
                         .card()
                         
-                        // About Section
+                        // About / Paywall
                         VStack(alignment: .leading, spacing: 16) {
                             Badge(text: "About", color: AppColor.sunshine.opacity(0.5))
                             
                             VStack(spacing: 12) {
-                                HStack {
-                                    Text("Version")
-                                        .font(AppFont.body())
-                                        .foregroundColor(AppColor.ink)
-                                    Spacer()
-                                    Text("1.0.0")
-                                        .font(AppFont.body())
-                                        .foregroundColor(AppColor.slate)
-                                }
-                                
-                                HStack {
-                                    Text("Created")
-                                        .font(AppFont.body())
-                                        .foregroundColor(AppColor.ink)
-                                    Spacer()
-                                    if let profile = profile, let createdAt = profile.createdAt {
-                                        Text(createdAt, style: .date)
-                                            .font(AppFont.body())
-                                            .foregroundColor(AppColor.slate)
-                                    } else {
-                                        Text("Unknown")
-                                            .font(AppFont.body())
-                                            .foregroundColor(AppColor.slate)
+                                NavigationLink(destination: PaywallView()) {
+                                    HStack {
+                                        Image(systemName: "lock.circle")
+                                        Text("Upgrade (Placeholder)")
+                                        Spacer()
+                                        Image(systemName: "chevron.right")
                                     }
+                                    .font(AppFont.body())
+                                    .foregroundColor(AppColor.ink)
                                 }
                             }
                         }

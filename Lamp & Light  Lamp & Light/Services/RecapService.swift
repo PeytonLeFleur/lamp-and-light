@@ -44,6 +44,7 @@ enum RecapService {
         recap.metrics = ["prayers": prayers, "completed": completed, "topTags": topTags] as [String: Any]
         recap.profile = profile
         try context.save()
+        Log.info("Generated recap for week starting \(weekStart)")
         return recap
     }
 

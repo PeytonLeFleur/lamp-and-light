@@ -9,6 +9,9 @@ struct TodayView: View {
     @State private var profile: Profile?
     @State private var showingScriptureExpanded = false
     @State private var isLoadingPlan = false
+    @State private var showWhySheet = false
+    @State private var whyReasons: [String] = []
+    @State private var whyThemes: [String] = []
     
     var body: some View {
         NavigationView {
@@ -22,10 +25,19 @@ struct TodayView: View {
                             HStack {
                                 Badge(text: "Scripture")
                                 Spacer()
+                                // Copy reference
+                                Button {
+                                    UIPasteboard.general.string = plan.scriptureRef
+                                    UINotificationFeedbackGenerator().notificationOccurred(.success)
+                                } label: { Image(systemName: "doc.on.doc").foregroundColor(AppColor.primaryGreen) }
+                                // Why this passage
+                                Button { presentWhy(plan: plan, profile: profile) } label: { Image(systemName: "info.circle").foregroundColor(AppColor.slate) }
                             }
-                            Text(plan.scriptureRef ?? "")
-                                .font(AppFont.title())
-                                .foregroundColor(AppColor.ink)
+                            HStack(alignment: .firstTextBaseline, spacing: 8) {
+                                Text(plan.scriptureRef ?? "")
+                                    .font(AppFont.title())
+                                    .foregroundColor(AppColor.ink)
+                            }
                             
                             DisclosureGroup("Read passage") {
                                 Text(plan.scriptureText ?? "")
@@ -49,6 +61,10 @@ struct TodayView: View {
                             Text(plan.application ?? "")
                                 .font(AppFont.body())
                                 .foregroundColor(AppColor.ink)
+                            
+                            PillButton(title: "Refresh Application", style: .secondary, systemImage: "arrow.triangle.2.circlepath") {
+                                regenerateBits(keeping: plan)
+                            }
                         }
                         .card()
                         
@@ -59,9 +75,8 @@ struct TodayView: View {
                                 .font(AppFont.body())
                                 .foregroundColor(AppColor.ink)
                                 .italic()
-                            
-                            PillButton(title: "Copy Prayer", style: .secondary, systemImage: "doc.on.doc") {
-                                copyPrayer()
+                            HStack {
+                                PillButton(title: "Copy Prayer", style: .secondary, systemImage: "doc.on.doc") { copyPrayer() }
                             }
                         }
                         .card()
@@ -138,6 +153,51 @@ struct TodayView: View {
             .navigationTitle("Today")
             .task {
                 await loadProfileAndPlan()
+            }
+            .sheet(isPresented: $showWhySheet) {
+                WhyThisPassageSheet(reference: dailyPlan?.scriptureRef ?? "", themes: whyThemes, reasons: whyReasons)
+            }
+        }
+    }
+    
+    private func presentWhy(plan: DailyPlan, profile: Profile) {
+        // Use plan.crossrefs as themes; fall back to ScriptureStore themes for the reference
+        var themes = plan.crossrefs ?? []
+        if themes.isEmpty, let ref = plan.scriptureRef {
+            let store = ScriptureStore()
+            if let p = store.passages.first(where: { $0.reference == ref }) {
+                themes = p.themes
+            }
+        }
+        whyThemes = themes
+        let rs = ThemeReasoner.reasons(context: viewContext, profile: profile, since: 30, passageThemes: themes)
+        whyReasons = rs
+        showWhySheet = true
+    }
+    
+    private func regenerateBits(keeping plan: DailyPlan) {
+        Task {
+            guard let prof = plan.profile else { return }
+            let tagsReq: NSFetchRequest<Entry> = Entry.fetchRequest()
+            tagsReq.predicate = NSPredicate(format: "profile == %@", prof)
+            let entries = (try? viewContext.fetch(tagsReq)) ?? []
+            let allTags = entries.flatMap { $0.tags ?? [] }
+            let recentThemes = Array(Set(allTags)).prefix(5)
+            do {
+                let bits = try await OpenAIClient.devotionalBits(
+                    passageRef: plan.scriptureRef ?? "",
+                    passageText: plan.scriptureText ?? "",
+                    recentThemes: Array(recentThemes)
+                )
+                plan.application = bits.application
+                plan.prayer = bits.prayer
+                plan.challenge = bits.challenge
+                plan.crossrefs = bits.crossrefs
+                try? viewContext.save()
+                UINotificationFeedbackGenerator().notificationOccurred(.success)
+            } catch {
+                Log.error("Regenerate error \(error.localizedDescription)")
+                UINotificationFeedbackGenerator().notificationOccurred(.error)
             }
         }
     }

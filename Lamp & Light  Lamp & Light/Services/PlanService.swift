@@ -11,6 +11,7 @@ class PlanService: ObservableObject {
         fetchRequest.fetchLimit = 1
 
         if let existingPlan = try? context.fetch(fetchRequest).first {
+            Log.info("Using existing plan for today")
             return existingPlan
         }
 
@@ -27,6 +28,7 @@ class PlanService: ObservableObject {
         }
 
         let passage = allTags.isEmpty ? scriptureStore.pickRandom() : scriptureStore.pick(byThemes: allTags)
+        Log.info("Picked passage \(passage.reference)")
 
         let newPlan = DailyPlan(context: context)
         newPlan.id = UUID()
@@ -39,6 +41,7 @@ class PlanService: ObservableObject {
 
         // Check cache first
         if let cached = AICache.shared.get(ref: passage.reference, day: today) {
+            Log.info("Using cached AI bits for \(passage.reference)")
             newPlan.application = cached.application
             newPlan.prayer = cached.prayer
             newPlan.challenge = cached.challenge
@@ -46,6 +49,7 @@ class PlanService: ObservableObject {
         } else {
             // Try to generate AI content, fall back to placeholders if it fails
             do {
+                Log.info("Requesting AI bits for \(passage.reference)")
                 var bits = try await OpenAIClient.devotionalBits(
                     passageRef: passage.reference,
                     passageText: passage.text,
@@ -86,9 +90,11 @@ class PlanService: ObservableObject {
                 newPlan.challenge = bits.challenge
                 newPlan.crossrefs = bits.crossrefs
             } catch {
+                Log.error("AI error \(error.localizedDescription)")
                 // One retry after 500ms
                 do {
                     try await Task.sleep(nanoseconds: 500_000_000)
+                    Log.info("Retrying AI bits for \(passage.reference)")
                     let bits = try await OpenAIClient.devotionalBits(
                         passageRef: passage.reference,
                         passageText: passage.text,
@@ -129,6 +135,7 @@ class PlanService: ObservableObject {
                     newPlan.challenge = retryBits.challenge
                     newPlan.crossrefs = retryBits.crossrefs
                 } catch {
+                    Log.error("AI retry failed \(error.localizedDescription)")
                     // Fallback to placeholders
                     newPlan.application = "A short reflection on this passage for today."
                     newPlan.prayer = "Lord, help me trust you and walk in your word today. Amen."
