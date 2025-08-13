@@ -56,6 +56,15 @@ struct SettingsView: View {
                             if #available(iOS 17.0, *) {
                                 NavigationLink("Screenshot Booth") { ScreenshotBoothView() }
                             }
+                            PillButton(title: "Share Lamp & Light", style: .secondary, systemImage: "square.and.arrow.up") {
+                                let text = "One passage, one prayer, one small challenge. Try Lamp & Light."
+                                let items: [Any] = [text]
+                                let av = UIActivityViewController(activityItems: items, applicationActivities: nil)
+                                UIApplication.shared.connectedScenes
+                                    .compactMap { ($0 as? UIWindowScene)?.keyWindow?.rootViewController }
+                                    .first?
+                                    .present(av, animated: true)
+                            }
                         }.card()
                         
                         // Profile Information Section

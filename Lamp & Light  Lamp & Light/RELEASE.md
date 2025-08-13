@@ -29,4 +29,14 @@
 - Build with Release and upload via Xcode Organizer.
 - Add app privacy answers and screenshots.
 - Set auto-renewing subscription metadata and pricing.
-- Submit to TestFlight internal testers. 
+- Submit to TestFlight internal testers.
+
+Archive:
+- Select Any iOS Device.
+- Product > Archive.
+- Validate and upload via Organizer.
+- Add internal testers in TestFlight.
+
+After upload:
+- Update Paywall trial copy if App Store pricing differs.
+- Replace Settings share link with the App Store URL. 

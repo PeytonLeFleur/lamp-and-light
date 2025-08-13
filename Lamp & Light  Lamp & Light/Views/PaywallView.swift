@@ -1,5 +1,6 @@
 import SwiftUI
 import StoreKit
+import SafariServices
 
 struct PaywallView: View {
     @StateObject private var pm = PurchaseManager.shared
@@ -14,6 +15,7 @@ struct PaywallView: View {
                     Label("Weekly recaps and share cards", systemImage: "doc.text.image")
                     Label("Streak rewards and goal tracking", systemImage: "flame.fill")
                     Label("Future features included", systemImage: "sparkles")
+                    Label("A calm, guided start to your day", systemImage: "sun.max.fill")
                 }.card()
 
                 if pm.products.isEmpty {
@@ -29,6 +31,9 @@ struct PaywallView: View {
 
                 PillButton(title: "Restore Purchases", style: .secondary, systemImage: "arrow.clockwise.circle") {
                     Task { await pm.restore() }
+                }
+                PillButton(title: "Manage Subscription", style: .secondary, systemImage: "gear") {
+                    openManageSubscriptions()
                 }
 
                 VStack(spacing: 6) {
@@ -46,9 +51,32 @@ struct PaywallView: View {
 
     private func buttonTitle(for p: Product) -> String {
         let price = p.displayPrice
-        if p.id.contains("monthly") { return "Start Premium • \(price)/mo" }
-        if p.id.contains("yearly") { return "Start Premium • \(price)/yr" }
-        return "Purchase \(price)"
+        var base: String
+        if p.id.contains("monthly") { base = "Start Premium • \(price)/mo" }
+        else if p.id.contains("yearly") { base = "Start Premium • \(price)/yr" }
+        else { base = "Purchase \(price)" }
+
+        if let offer = p.subscription?.introductoryOffer {
+            let unit = offer.period.unit
+            let value = offer.period.value
+            let unitText: String = {
+                switch unit {
+                case .day: return value == 1 ? "day" : "days"
+                case .week: return value == 1 ? "week" : "weeks"
+                case .month: return value == 1 ? "month" : "months"
+                case .year: return value == 1 ? "year" : "years"
+                @unknown default: return "days"
+                }
+            }()
+            return "\(base) • \(value) \(unitText) free"
+        }
+        return base
+    }
+
+    private func openManageSubscriptions() {
+        if let url = URL(string: "https://apps.apple.com/account/subscriptions") {
+            UIApplication.shared.open(url)
+        }
     }
 }
 

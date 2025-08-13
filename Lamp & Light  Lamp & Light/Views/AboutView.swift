@@ -25,7 +25,7 @@ struct AboutView: View {
                     VStack(alignment: .leading, spacing: 10) {
                         Badge(text: "Support")
                         PillButton(title: "Contact Support", style: .secondary, systemImage: "envelope.fill") {
-                            if let url = URL(string: "mailto:support@lampandlight.app") { UIApplication.shared.open(url) }
+                            openSupportEmail()
                         }
                         PillButton(title: "Delete My Data On This Device", style: .danger, systemImage: "trash.fill") {
                             confirmDelete()
@@ -44,6 +44,26 @@ struct AboutView: View {
         let v = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? ""
         let b = Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? ""
         return "\(v) (\(b))"
+    }
+
+    private func openSupportEmail() {
+        let version = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "0"
+        let build = Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String ?? "0"
+        let sys = UIDevice.current.systemVersion
+        let locale = Locale.current.identifier
+        let subject = "Lamp & Light Support"
+        let body = """
+        Please describe your issue here.
+
+        Version \(version) (\(build))
+        iOS \(sys)
+        Locale \(locale)
+        """
+        let encodedSubject = subject.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
+        let encodedBody = body.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
+        if let url = URL(string: "mailto:support@lampandlight.app?subject=\(encodedSubject)&body=\(encodedBody)") {
+            UIApplication.shared.open(url)
+        }
     }
 
     private func confirmDelete() {
