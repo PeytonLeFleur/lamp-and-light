@@ -10,6 +10,7 @@ import SwiftUI
 @main
 struct Lamp___Light__Lamp___LightApp: App {
     let persistenceController = PersistenceController.shared
+    @State private var showOnboarding = !UserDefaults.standard.bool(forKey: "onboarded")
 
     var body: some Scene {
         WindowGroup {
@@ -46,6 +47,7 @@ struct Lamp___Light__Lamp___LightApp: App {
             }
             .tint(AppColor.primaryGreen)
             .environment(\.managedObjectContext, persistenceController.container.viewContext)
+            .sheet(isPresented: $showOnboarding) { OnboardingView() }
         }
     }
 }

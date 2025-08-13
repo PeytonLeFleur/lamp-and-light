@@ -1,6 +1,7 @@
 import SwiftUI
 import CoreData
 import UniformTypeIdentifiers
+import UserNotifications
 
 struct SettingsView: View {
     @Environment(\.managedObjectContext) private var viewContext
@@ -12,6 +13,8 @@ struct SettingsView: View {
     @State private var exportData: Data?
     @State private var showingShareSheet = false
     @State private var shareImage: UIImage?
+    @State private var notifHour = 6
+    @State private var notifMinute = 0
     
     var body: some View {
         NavigationView {
@@ -95,6 +98,18 @@ struct SettingsView: View {
                                             .foregroundColor(AppColor.slate)
                                     }
                                 }
+                            }
+                        }
+                        .card()
+                        
+                        // Daily Reminder Section
+                        VStack(alignment: .leading, spacing: 10) {
+                            Badge(text: "Daily Reminder", color: AppColor.sky)
+                            Stepper(value: $notifHour, in: 0...23) { Text("Hour: \(notifHour)") }
+                            Stepper(value: $notifMinute, in: 0...55, step: 5) { Text("Minute: \(notifMinute)") }
+                            PillButton(title: "Save Reminder Time", style: .secondary, systemImage: "bell.badge.fill") {
+                                Notifications.scheduleDaily(hour: notifHour, minute: notifMinute)
+                                UINotificationFeedbackGenerator().notificationOccurred(.success)
                             }
                         }
                         .card()
