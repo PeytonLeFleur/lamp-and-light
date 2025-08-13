@@ -1,0 +1,563 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXContainerItemProxy section */
+		CC07BD782E4C32C600F91392 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CC07BD5D2E4C32C200F91392 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = CC07BD642E4C32C200F91392;
+			remoteInfo = "Lamp & Light  Lamp & Light";
+		};
+		CC07BD822E4C32C600F91392 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CC07BD5D2E4C32C200F91392 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = CC07BD642E4C32C200F91392;
+			remoteInfo = "Lamp & Light  Lamp & Light";
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		CC07BD652E4C32C200F91392 /* Lamp & Light  Lamp & Light.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Lamp & Light  Lamp & Light.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		CC07BD772E4C32C600F91392 /* Lamp & Light  Lamp & LightTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Lamp & Light  Lamp & LightTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		CC07BD812E4C32C600F91392 /* Lamp & Light  Lamp & LightUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Lamp & Light  Lamp & LightUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		CC07BD672E4C32C200F91392 /* Lamp & Light  Lamp & Light */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = "Lamp & Light  Lamp & Light";
+			sourceTree = "<group>";
+		};
+		CC07BD7A2E4C32C600F91392 /* Lamp & Light  Lamp & LightTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = "Lamp & Light  Lamp & LightTests";
+			sourceTree = "<group>";
+		};
+		CC07BD842E4C32C600F91392 /* Lamp & Light  Lamp & LightUITests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = "Lamp & Light  Lamp & LightUITests";
+			sourceTree = "<group>";
+		};
+/* End PBXFileSystemSynchronizedRootGroup section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		CC07BD622E4C32C200F91392 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CC07BD742E4C32C600F91392 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CC07BD7E2E4C32C600F91392 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		CC07BD5C2E4C32C200F91392 = {
+			isa = PBXGroup;
+			children = (
+				CC07BD672E4C32C200F91392 /* Lamp & Light  Lamp & Light */,
+				CC07BD7A2E4C32C600F91392 /* Lamp & Light  Lamp & LightTests */,
+				CC07BD842E4C32C600F91392 /* Lamp & Light  Lamp & LightUITests */,
+				CC07BD662E4C32C200F91392 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		CC07BD662E4C32C200F91392 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				CC07BD652E4C32C200F91392 /* Lamp & Light  Lamp & Light.app */,
+				CC07BD772E4C32C600F91392 /* Lamp & Light  Lamp & LightTests.xctest */,
+				CC07BD812E4C32C600F91392 /* Lamp & Light  Lamp & LightUITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		CC07BD642E4C32C200F91392 /* Lamp & Light  Lamp & Light */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = CC07BD8B2E4C32C600F91392 /* Build configuration list for PBXNativeTarget "Lamp & Light  Lamp & Light" */;
+			buildPhases = (
+				CC07BD612E4C32C200F91392 /* Sources */,
+				CC07BD622E4C32C200F91392 /* Frameworks */,
+				CC07BD632E4C32C200F91392 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				CC07BD672E4C32C200F91392 /* Lamp & Light  Lamp & Light */,
+			);
+			name = "Lamp & Light  Lamp & Light";
+			packageProductDependencies = (
+			);
+			productName = "Lamp & Light  Lamp & Light";
+			productReference = CC07BD652E4C32C200F91392 /* Lamp & Light  Lamp & Light.app */;
+			productType = "com.apple.product-type.application";
+		};
+		CC07BD762E4C32C600F91392 /* Lamp & Light  Lamp & LightTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = CC07BD8E2E4C32C600F91392 /* Build configuration list for PBXNativeTarget "Lamp & Light  Lamp & LightTests" */;
+			buildPhases = (
+				CC07BD732E4C32C600F91392 /* Sources */,
+				CC07BD742E4C32C600F91392 /* Frameworks */,
+				CC07BD752E4C32C600F91392 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				CC07BD792E4C32C600F91392 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				CC07BD7A2E4C32C600F91392 /* Lamp & Light  Lamp & LightTests */,
+			);
+			name = "Lamp & Light  Lamp & LightTests";
+			packageProductDependencies = (
+			);
+			productName = "Lamp & Light  Lamp & LightTests";
+			productReference = CC07BD772E4C32C600F91392 /* Lamp & Light  Lamp & LightTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		CC07BD802E4C32C600F91392 /* Lamp & Light  Lamp & LightUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = CC07BD912E4C32C600F91392 /* Build configuration list for PBXNativeTarget "Lamp & Light  Lamp & LightUITests" */;
+			buildPhases = (
+				CC07BD7D2E4C32C600F91392 /* Sources */,
+				CC07BD7E2E4C32C600F91392 /* Frameworks */,
+				CC07BD7F2E4C32C600F91392 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				CC07BD832E4C32C600F91392 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				CC07BD842E4C32C600F91392 /* Lamp & Light  Lamp & LightUITests */,
+			);
+			name = "Lamp & Light  Lamp & LightUITests";
+			packageProductDependencies = (
+			);
+			productName = "Lamp & Light  Lamp & LightUITests";
+			productReference = CC07BD812E4C32C600F91392 /* Lamp & Light  Lamp & LightUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		CC07BD5D2E4C32C200F91392 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1640;
+				LastUpgradeCheck = 1640;
+				TargetAttributes = {
+					CC07BD642E4C32C200F91392 = {
+						CreatedOnToolsVersion = 16.4;
+					};
+					CC07BD762E4C32C600F91392 = {
+						CreatedOnToolsVersion = 16.4;
+						TestTargetID = CC07BD642E4C32C200F91392;
+					};
+					CC07BD802E4C32C600F91392 = {
+						CreatedOnToolsVersion = 16.4;
+						TestTargetID = CC07BD642E4C32C200F91392;
+					};
+				};
+			};
+			buildConfigurationList = CC07BD602E4C32C200F91392 /* Build configuration list for PBXProject "Lamp & Light  Lamp & Light" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = CC07BD5C2E4C32C200F91392;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = CC07BD662E4C32C200F91392 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				CC07BD642E4C32C200F91392 /* Lamp & Light  Lamp & Light */,
+				CC07BD762E4C32C600F91392 /* Lamp & Light  Lamp & LightTests */,
+				CC07BD802E4C32C600F91392 /* Lamp & Light  Lamp & LightUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		CC07BD632E4C32C200F91392 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CC07BD752E4C32C600F91392 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CC07BD7F2E4C32C600F91392 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		CC07BD612E4C32C200F91392 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CC07BD732E4C32C600F91392 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CC07BD7D2E4C32C600F91392 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		CC07BD792E4C32C600F91392 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = CC07BD642E4C32C200F91392 /* Lamp & Light  Lamp & Light */;
+			targetProxy = CC07BD782E4C32C600F91392 /* PBXContainerItemProxy */;
+		};
+		CC07BD832E4C32C600F91392 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = CC07BD642E4C32C200F91392 /* Lamp & Light  Lamp & Light */;
+			targetProxy = CC07BD822E4C32C600F91392 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		CC07BD892E4C32C600F91392 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = 76T2PR3UW6;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.5;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		CC07BD8A2E4C32C600F91392 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = 76T2PR3UW6;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.5;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		CC07BD8C2E4C32C600F91392 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 76T2PR3UW6;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.titanleadgen.Lamp---Light--Lamp---Light";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		CC07BD8D2E4C32C600F91392 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 76T2PR3UW6;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.titanleadgen.Lamp---Light--Lamp---Light";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		CC07BD8F2E4C32C600F91392 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 76T2PR3UW6;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.5;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.titanleadgen.Lamp---Light--Lamp---LightTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Lamp & Light  Lamp & Light.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Lamp & Light  Lamp & Light";
+			};
+			name = Debug;
+		};
+		CC07BD902E4C32C600F91392 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 76T2PR3UW6;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.5;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.titanleadgen.Lamp---Light--Lamp---LightTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Lamp & Light  Lamp & Light.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Lamp & Light  Lamp & Light";
+			};
+			name = Release;
+		};
+		CC07BD922E4C32C600F91392 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 76T2PR3UW6;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.titanleadgen.Lamp---Light--Lamp---LightUITests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = "Lamp & Light  Lamp & Light";
+			};
+			name = Debug;
+		};
+		CC07BD932E4C32C600F91392 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 76T2PR3UW6;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.titanleadgen.Lamp---Light--Lamp---LightUITests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = "Lamp & Light  Lamp & Light";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		CC07BD602E4C32C200F91392 /* Build configuration list for PBXProject "Lamp & Light  Lamp & Light" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CC07BD892E4C32C600F91392 /* Debug */,
+				CC07BD8A2E4C32C600F91392 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		CC07BD8B2E4C32C600F91392 /* Build configuration list for PBXNativeTarget "Lamp & Light  Lamp & Light" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CC07BD8C2E4C32C600F91392 /* Debug */,
+				CC07BD8D2E4C32C600F91392 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		CC07BD8E2E4C32C600F91392 /* Build configuration list for PBXNativeTarget "Lamp & Light  Lamp & LightTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CC07BD8F2E4C32C600F91392 /* Debug */,
+				CC07BD902E4C32C600F91392 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		CC07BD912E4C32C600F91392 /* Build configuration list for PBXNativeTarget "Lamp & Light  Lamp & LightUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CC07BD922E4C32C600F91392 /* Debug */,
+				CC07BD932E4C32C600F91392 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = CC07BD5D2E4C32C200F91392 /* Project object */;
+}
