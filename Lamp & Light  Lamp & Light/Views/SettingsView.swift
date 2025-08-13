@@ -40,6 +40,9 @@ struct SettingsView: View {
                             Badge(text: "About & Legal")
                             NavigationLink("About Lamp & Light") { AboutView() }
                             NavigationLink("Terms, Privacy, Disclaimer") { LegalView() }
+                            if #available(iOS 17.0, *) {
+                                NavigationLink("Screenshot Booth") { ScreenshotBoothView() }
+                            }
                         }.card()
                         
                         // Profile Information Section

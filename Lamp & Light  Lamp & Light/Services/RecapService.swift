@@ -46,6 +46,7 @@ enum RecapService {
         try context.save()
         Log.info("Generated recap for week starting \(weekStart)")
         Analytics.track("recap_generated")
+        Ratings.maybeAsk(for: "recap")
         return recap
     }
 

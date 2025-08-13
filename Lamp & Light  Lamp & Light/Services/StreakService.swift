@@ -16,6 +16,9 @@ enum StreakService {
         }
         profile.lastActive = date
         try? context.save()
+        if profile.streakCount == 7 || profile.streakCount == 14 {
+            Ratings.maybeAsk(for: "streak")
+        }
     }
 
     static func incrementWeekly(context: NSManagedObjectContext, profile: Profile) {
