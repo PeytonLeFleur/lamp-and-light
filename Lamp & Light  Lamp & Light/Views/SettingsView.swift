@@ -13,45 +13,101 @@ struct SettingsView: View {
     
     var body: some View {
         NavigationView {
-            Form {
-                Section(header: Text("Profile Information")) {
-                    TextField("Display Name", text: $displayName)
-                        .textFieldStyle(RoundedBorderTextFieldStyle())
-                    
-                    TextField("Denomination", text: $denomination)
-                        .textFieldStyle(RoundedBorderTextFieldStyle())
-                    
-                    TextField("Spiritual Goals", text: $goals)
-                        .textFieldStyle(RoundedBorderTextFieldStyle())
-                        .lineLimit(3)
-                }
-                
-                Section(header: Text("Data Management")) {
-                    Button("Export My Data") {
-                        exportUserData()
-                    }
-                    .foregroundColor(.accentColor)
-                }
-                
-                Section(header: Text("About")) {
-                    HStack {
-                        Text("Version")
-                        Spacer()
-                        Text("1.0.0")
-                            .foregroundColor(.secondary)
-                    }
-                    
-                    HStack {
-                        Text("Created")
-                        Spacer()
-                        if let profile = profile, let createdAt = profile.createdAt {
-                            Text(createdAt, style: .date)
-                                .foregroundColor(.secondary)
-                        } else {
-                            Text("Unknown")
-                                .foregroundColor(.secondary)
+            AppBackground {
+                ScrollView {
+                    VStack(spacing: 20) {
+                        // Profile Information Section
+                        VStack(alignment: .leading, spacing: 16) {
+                            Badge(text: "Profile Information", color: AppColor.primaryGreen)
+                            
+                            VStack(spacing: 16) {
+                                VStack(alignment: .leading, spacing: 8) {
+                                    Text("Display Name")
+                                        .font(AppFont.headline())
+                                        .foregroundColor(AppColor.ink)
+                                    TextField("Display Name", text: $displayName)
+                                        .textFieldStyle(RoundedBorderTextFieldStyle())
+                                        .overlay(
+                                            RoundedRectangle(cornerRadius: 8)
+                                                .stroke(AppColor.softGreen.opacity(0.3), lineWidth: 1)
+                                        )
+                                }
+                                
+                                VStack(alignment: .leading, spacing: 8) {
+                                    Text("Denomination")
+                                        .font(AppFont.headline())
+                                        .foregroundColor(AppColor.ink)
+                                    TextField("Denomination", text: $denomination)
+                                        .textFieldStyle(RoundedBorderTextFieldStyle())
+                                        .overlay(
+                                            RoundedRectangle(cornerRadius: 8)
+                                                .stroke(AppColor.softGreen.opacity(0.3), lineWidth: 1)
+                                        )
+                                }
+                                
+                                VStack(alignment: .leading, spacing: 8) {
+                                    Text("Spiritual Goals")
+                                        .font(AppFont.headline())
+                                        .foregroundColor(AppColor.ink)
+                                    TextField("Spiritual Goals", text: $goals)
+                                        .textFieldStyle(RoundedBorderTextFieldStyle())
+                                        .lineLimit(3)
+                                        .overlay(
+                                            RoundedRectangle(cornerRadius: 8)
+                                                .stroke(AppColor.softGreen.opacity(0.3), lineWidth: 1)
+                                        )
+                                }
+                            }
                         }
+                        .card()
+                        
+                        // Data Management Section
+                        VStack(alignment: .leading, spacing: 16) {
+                            Badge(text: "Data Management", color: AppColor.sky)
+                            
+                            PillButton(title: "Export My Data", style: .secondary, systemImage: "square.and.arrow.up") {
+                                exportUserData()
+                            }
+                        }
+                        .card()
+                        
+                        // About Section
+                        VStack(alignment: .leading, spacing: 16) {
+                            Badge(text: "About", color: AppColor.sunshine.opacity(0.5))
+                            
+                            VStack(spacing: 12) {
+                                HStack {
+                                    Text("Version")
+                                        .font(AppFont.body())
+                                        .foregroundColor(AppColor.ink)
+                                    Spacer()
+                                    Text("1.0.0")
+                                        .font(AppFont.body())
+                                        .foregroundColor(AppColor.slate)
+                                }
+                                
+                                HStack {
+                                    Text("Created")
+                                        .font(AppFont.body())
+                                        .foregroundColor(AppColor.ink)
+                                    Spacer()
+                                    if let profile = profile, let createdAt = profile.createdAt {
+                                        Text(createdAt, style: .date)
+                                            .font(AppFont.body())
+                                            .foregroundColor(AppColor.slate)
+                                    } else {
+                                        Text("Unknown")
+                                            .font(AppFont.body())
+                                            .foregroundColor(AppColor.slate)
+                                    }
+                                }
+                            }
+                        }
+                        .card()
+                        
+                        Spacer(minLength: 20)
                     }
+                    .padding(.vertical, 8)
                 }
             }
             .navigationTitle("Settings")
@@ -95,8 +151,10 @@ struct SettingsView: View {
         
         do {
             try viewContext.save()
+            UINotificationFeedbackGenerator().notificationOccurred(.success)
         } catch {
             print("Error saving profile: \(error)")
+            UINotificationFeedbackGenerator().notificationOccurred(.error)
         }
     }
     
@@ -113,20 +171,6 @@ struct SettingsView: View {
             "goals": profile.goals ?? "",
             "createdAt": (profile.createdAt?.timeIntervalSince1970 ?? 0) as Any
         ]
-        
-        // Entries
-        if let entries = profile.entries?.allObjects as? [Entry] {
-            exportObject["entries"] = entries.map { entry in
-                [
-                    "id": entry.id?.uuidString ?? "",
-                    "kind": entry.kind ?? "",
-                    "content": entry.content ?? "",
-                    "emotion": entry.emotion ?? "",
-                    "tags": entry.tags ?? [],
-                    "createdAt": entry.createdAt?.timeIntervalSince1970 ?? 0
-                ]
-            }
-        }
         
         // Daily Plans
         if let dailyPlans = profile.dailyPlans?.allObjects as? [DailyPlan] {
@@ -175,8 +219,10 @@ struct SettingsView: View {
             let jsonData = try JSONSerialization.data(withJSONObject: exportObject, options: .prettyPrinted)
             exportData = jsonData
             showingExportSheet = true
+            UINotificationFeedbackGenerator().notificationOccurred(.success)
         } catch {
             print("Error creating export data: \(error)")
+            UINotificationFeedbackGenerator().notificationOccurred(.error)
         }
     }
 }

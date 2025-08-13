@@ -8,33 +8,43 @@ struct TimelineView: View {
     
     var body: some View {
         NavigationView {
-            Group {
-                if timelineItems.isEmpty {
-                    VStack {
-                        Image(systemName: "clock")
-                            .font(.system(size: 50))
-                            .foregroundColor(.secondary)
-                        Text("No timeline items yet")
-                            .font(.headline)
-                            .foregroundColor(.secondary)
-                        Text("Your journal entries and daily plans will appear here")
-                            .font(.subheadline)
-                            .foregroundColor(.secondary)
-                            .multilineTextAlignment(.center)
-                            .padding(.horizontal)
-                    }
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                } else {
-                    List {
-                        ForEach(groupedItems.keys.sorted(by: >), id: \.self) { month in
-                            Section(header: Text(monthFormatter.string(from: month))) {
-                                ForEach(groupedItems[month] ?? [], id: \.id) { item in
-                                    TimelineItemRow(item: item)
+            AppBackground {
+                Group {
+                    if timelineItems.isEmpty {
+                        VStack(spacing: 20) {
+                            Image(systemName: "clock")
+                                .font(.system(size: 60))
+                                .foregroundColor(AppColor.slate.opacity(0.3))
+                            Text("No timeline items yet")
+                                .font(AppFont.headline())
+                                .foregroundColor(AppColor.ink)
+                            Text("Your journal entries and daily plans will appear here")
+                                .font(AppFont.body())
+                                .foregroundColor(AppColor.slate)
+                                .multilineTextAlignment(.center)
+                                .padding(.horizontal)
+                        }
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    } else {
+                        ScrollView {
+                            LazyVStack(spacing: 16) {
+                                ForEach(groupedItems.keys.sorted(by: >), id: \.self) { month in
+                                    VStack(alignment: .leading, spacing: 12) {
+                                        Text(monthFormatter.string(from: month))
+                                            .font(AppFont.headline())
+                                            .foregroundColor(AppColor.ink)
+                                            .padding(.horizontal, 4)
+                                        
+                                        ForEach(groupedItems[month] ?? [], id: \.id) { item in
+                                            TimelineItemRow(item: item)
+                                                .card()
+                                        }
+                                    }
                                 }
                             }
+                            .padding(.vertical, 8)
                         }
                     }
-                    .listStyle(InsetGroupedListStyle())
                 }
             }
             .navigationTitle("Timeline")
@@ -138,31 +148,26 @@ struct TimelineItemRow: View {
                 
                 VStack(alignment: .leading, spacing: 4) {
                     Text(title)
-                        .font(.headline)
+                        .font(AppFont.headline())
                         .lineLimit(1)
+                        .foregroundColor(AppColor.ink)
                     
                     Text(dateFormatter.string(from: item.date))
-                        .font(.caption)
-                        .foregroundColor(.secondary)
+                        .font(AppFont.caption())
+                        .foregroundColor(AppColor.slate.opacity(0.7))
                 }
                 
                 Spacer()
                 
                 if case .entry(let entry) = item.type {
-                    Text(entry.kind?.capitalized ?? "")
-                        .font(.caption)
-                        .padding(.horizontal, 8)
-                        .padding(.vertical, 4)
-                        .background(kindColor)
-                        .foregroundColor(.white)
-                        .cornerRadius(8)
+                    Badge(text: entry.kind?.capitalized ?? "", color: kindColor)
                 }
             }
             
             Text(content)
-                .font(.body)
+                .font(AppFont.body())
                 .lineLimit(3)
-                .foregroundColor(.primary)
+                .foregroundColor(AppColor.ink)
         }
         .padding(.vertical, 4)
     }
@@ -170,18 +175,18 @@ struct TimelineItemRow: View {
     private var iconName: String {
         switch item.type {
         case .entry:
-            return "text.bubble"
+            return "text.bubble.fill"
         case .dailyPlan:
-            return "book"
+            return "book.fill"
         }
     }
     
     private var iconColor: Color {
         switch item.type {
         case .entry:
-            return .blue
+            return AppColor.sky
         case .dailyPlan:
-            return .green
+            return AppColor.primaryGreen
         }
     }
     
@@ -207,16 +212,16 @@ struct TimelineItemRow: View {
         if case .entry(let entry) = item.type {
             switch entry.kind {
             case "prayer":
-                return .blue
+                return AppColor.sky
             case "journal":
-                return .green
+                return AppColor.primaryGreen
             case "insight":
-                return .orange
+                return AppColor.sunshine
             default:
-                return .gray
+                return AppColor.slate
             }
         }
-        return .gray
+        return AppColor.slate
     }
     
     private var dateFormatter: DateFormatter {

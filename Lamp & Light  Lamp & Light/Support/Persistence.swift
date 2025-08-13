@@ -6,7 +6,6 @@ struct PersistenceController {
     static var preview: PersistenceController = {
         let result = PersistenceController(inMemory: true)
         let viewContext = result.container.viewContext
-        
         // Create a sample profile for preview
         let sampleProfile = Profile(context: viewContext)
         sampleProfile.id = UUID()
@@ -14,6 +13,10 @@ struct PersistenceController {
         sampleProfile.displayName = "Sample User"
         sampleProfile.denomination = "Christian"
         sampleProfile.goals = "Grow in faith and prayer"
+        sampleProfile.lastActive = Date()
+        sampleProfile.streakCount = 7
+        sampleProfile.weeklyGoal = 5
+        sampleProfile.weeklyCompleted = 3
         
         // Create a sample daily plan
         let samplePlan = DailyPlan(context: viewContext)
@@ -77,6 +80,10 @@ struct PersistenceController {
                 newProfile.displayName = "User"
                 newProfile.denomination = ""
                 newProfile.goals = ""
+                newProfile.lastActive = Date()
+                newProfile.streakCount = 0
+                newProfile.weeklyGoal = 5
+                newProfile.weeklyCompleted = 0
                 
                 try context.save()
                 print("Created default profile")

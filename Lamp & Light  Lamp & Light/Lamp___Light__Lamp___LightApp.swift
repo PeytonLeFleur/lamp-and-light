@@ -16,28 +16,29 @@ struct Lamp___Light__Lamp___LightApp: App {
             TabView {
                 TodayView()
                     .tabItem {
-                        Image(systemName: "sun.max")
+                        Image(systemName: "sun.max.fill")
                         Text("Today")
                     }
                 
                 JournalView()
                     .tabItem {
-                        Image(systemName: "book")
+                        Image(systemName: "square.and.pencil")
                         Text("Journal")
                     }
                 
                 TimelineView()
                     .tabItem {
-                        Image(systemName: "clock")
+                        Image(systemName: "clock.fill")
                         Text("Timeline")
                     }
                 
                 SettingsView()
                     .tabItem {
-                        Image(systemName: "gear")
+                        Image(systemName: "gearshape.fill")
                         Text("Settings")
                     }
             }
+            .tint(AppColor.primaryGreen)
             .environment(\.managedObjectContext, persistenceController.container.viewContext)
         }
     }

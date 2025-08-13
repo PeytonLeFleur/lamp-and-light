@@ -14,98 +14,112 @@ struct JournalView: View {
     
     var body: some View {
         NavigationView {
-            VStack(spacing: 20) {
-                // Entry Creation Section
-                VStack(alignment: .leading, spacing: 16) {
-                    Text("New Entry")
-                        .font(.headline)
-                        .padding(.horizontal)
-                    
-                    // Kind Selection
-                    Picker("Entry Type", selection: $selectedKind) {
-                        ForEach(entryKinds, id: \.self) { kind in
-                            Text(kind.capitalized)
-                                .tag(kind)
-                        }
-                    }
-                    .pickerStyle(SegmentedPickerStyle())
-                    .padding(.horizontal)
-                    
-                    // Content Editor
-                    VStack(alignment: .leading, spacing: 8) {
-                        Text("Content")
-                            .font(.subheadline)
-                            .foregroundColor(.secondary)
+            AppBackground {
+                VStack(spacing: 20) {
+                    // Entry Creation Section
+                    VStack(alignment: .leading, spacing: 16) {
+                        Badge(text: "New Entry", color: AppColor.primaryGreen)
                         
-                        TextEditor(text: $content)
-                            .frame(minHeight: 120)
-                            .padding(8)
-                            .background(Color(.systemGray6))
-                            .cornerRadius(8)
-                    }
-                    .padding(.horizontal)
-                    
-                    // Optional Fields
-                    HStack {
-                        VStack(alignment: .leading, spacing: 8) {
-                            Text("Emotion")
-                                .font(.subheadline)
-                                .foregroundColor(.secondary)
-                            
-                            TextField("How are you feeling?", text: $emotion)
-                                .textFieldStyle(RoundedBorderTextFieldStyle())
-                        }
-                        
-                        VStack(alignment: .leading, spacing: 8) {
-                            Text("Tags")
-                                .font(.subheadline)
-                                .foregroundColor(.secondary)
-                            
-                            TextField("faith, trust, hope", text: $tags)
-                                .textFieldStyle(RoundedBorderTextFieldStyle())
-                        }
-                    }
-                    .padding(.horizontal)
-                    
-                    // Save Button
-                    Button(action: saveEntry) {
-                        Text("Save Entry")
-                            .frame(maxWidth: .infinity)
-                            .padding()
-                            .background(content.isEmpty ? Color.gray : Color.accentColor)
-                            .foregroundColor(.white)
-                            .cornerRadius(10)
-                    }
-                    .disabled(content.isEmpty)
-                    .padding(.horizontal)
-                }
-                .padding(.vertical)
-                .background(Color(.systemBackground))
-                .cornerRadius(12)
-                .shadow(radius: 2)
-                .padding(.horizontal)
-                
-                // Today's Entries
-                VStack(alignment: .leading, spacing: 12) {
-                    Text("Today's Entries")
-                        .font(.headline)
-                        .padding(.horizontal)
-                    
-                    if todayEntries.isEmpty {
-                        Text("No entries yet today")
-                            .foregroundColor(.secondary)
-                            .padding()
-                    } else {
-                        List {
-                            ForEach(todayEntries) { entry in
-                                EntryRow(entry: entry)
+                        // Kind Selection
+                        Picker("Entry Type", selection: $selectedKind) {
+                            ForEach(entryKinds, id: \.self) { kind in
+                                Text(kind.capitalized)
+                                    .tag(kind)
                             }
                         }
-                        .listStyle(PlainListStyle())
+                        .pickerStyle(SegmentedPickerStyle())
+                        .padding(.horizontal)
+                        
+                        // Content Editor
+                        VStack(alignment: .leading, spacing: 8) {
+                            Text("Content")
+                                .font(AppFont.headline())
+                                .foregroundColor(AppColor.ink)
+                            
+                            TextEditor(text: $content)
+                                .frame(minHeight: 120)
+                                .padding(12)
+                                .background(AppColor.mist)
+                                .cornerRadius(16)
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 16)
+                                        .stroke(AppColor.softGreen.opacity(0.3), lineWidth: 1)
+                                )
+                        }
+                        .padding(.horizontal)
+                        
+                        // Optional Fields
+                        HStack {
+                            VStack(alignment: .leading, spacing: 8) {
+                                Text("Emotion")
+                                    .font(AppFont.headline())
+                                    .foregroundColor(AppColor.ink)
+                                
+                                TextField("How are you feeling?", text: $emotion)
+                                    .textFieldStyle(RoundedBorderTextFieldStyle())
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: 8)
+                                            .stroke(AppColor.softGreen.opacity(0.3), lineWidth: 1)
+                                    )
+                            }
+                            
+                            VStack(alignment: .leading, spacing: 8) {
+                                Text("Tags")
+                                    .font(AppFont.headline())
+                                    .foregroundColor(AppColor.ink)
+                                
+                                TextField("faith, trust, hope", text: $tags)
+                                    .textFieldStyle(RoundedBorderTextFieldStyle())
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: 8)
+                                            .stroke(AppColor.softGreen.opacity(0.3), lineWidth: 1)
+                                    )
+                            }
+                        }
+                        .padding(.horizontal)
+                        
+                        // Save Button
+                        PillButton(title: "Save Entry", style: .primary, systemImage: "plus.circle.fill") {
+                            withAnimation(.spring(response: 0.4, dampingFraction: 0.8)) {
+                                saveEntry()
+                            }
+                        }
+                        .disabled(content.isEmpty)
+                        .padding(.horizontal)
                     }
+                    .card()
+                    
+                    // Today's Entries
+                    VStack(alignment: .leading, spacing: 12) {
+                        Badge(text: "Today's Entries", color: AppColor.sky)
+                        
+                        if todayEntries.isEmpty {
+                            VStack(spacing: 16) {
+                                Image(systemName: "book.closed")
+                                    .font(.system(size: 50))
+                                    .foregroundColor(AppColor.slate.opacity(0.3))
+                                Text("No entries yet today")
+                                    .font(AppFont.headline())
+                                    .foregroundColor(AppColor.slate)
+                                Text("Start your spiritual journey with your first entry")
+                                    .font(AppFont.body())
+                                    .foregroundColor(AppColor.slate.opacity(0.7))
+                                    .multilineTextAlignment(.center)
+                            }
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 40)
+                        } else {
+                            LazyVStack(spacing: 12) {
+                                ForEach(todayEntries) { entry in
+                                    EntryRow(entry: entry)
+                                        .card()
+                                }
+                            }
+                        }
+                    }
+                    
+                    Spacer()
                 }
-                
-                Spacer()
             }
             .navigationTitle("Journal")
             .onAppear {
@@ -166,8 +180,12 @@ struct JournalView: View {
             
             // Reload entries
             loadTodayEntries()
+            
+            // Haptic feedback
+            UINotificationFeedbackGenerator().notificationOccurred(.success)
         } catch {
             print("Error saving entry: \(error)")
+            UINotificationFeedbackGenerator().notificationOccurred(.error)
         }
     }
 }
@@ -178,41 +196,38 @@ struct EntryRow: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             HStack {
-                Text(entry.kind?.capitalized ?? "")
-                    .font(.caption)
-                    .padding(.horizontal, 8)
-                    .padding(.vertical, 4)
-                    .background(kindColor)
-                    .foregroundColor(.white)
-                    .cornerRadius(8)
-                
+                Badge(text: entry.kind?.capitalized ?? "", color: kindColor)
                 Spacer()
-                
                 Text(entry.createdAt ?? Date(), style: .time)
-                    .font(.caption)
-                    .foregroundColor(.secondary)
+                    .font(AppFont.caption())
+                    .foregroundColor(AppColor.slate.opacity(0.7))
             }
             
             Text(entry.content ?? "")
-                .font(.body)
+                .font(AppFont.body())
                 .lineLimit(3)
+                .foregroundColor(AppColor.ink)
             
             if let emotion = entry.emotion, !emotion.isEmpty {
-                Text("Feeling: \(emotion)")
-                    .font(.caption)
-                    .foregroundColor(.secondary)
+                HStack {
+                    Image(systemName: "heart.fill")
+                        .foregroundColor(AppColor.coral)
+                    Text("Feeling: \(emotion)")
+                        .font(AppFont.caption())
+                        .foregroundColor(AppColor.slate)
+                }
             }
             
             if let tags = entry.tags, !tags.isEmpty {
                 HStack {
                     ForEach(tags, id: \.self) { tag in
                         Text(tag)
-                            .font(.caption2)
-                            .padding(.horizontal, 6)
-                            .padding(.vertical, 2)
-                            .background(Color.accentColor.opacity(0.2))
-                            .foregroundColor(.accentColor)
-                            .cornerRadius(4)
+                            .font(AppFont.caption())
+                            .padding(.horizontal, 8)
+                            .padding(.vertical, 4)
+                            .background(AppColor.softGreen.opacity(0.3))
+                            .foregroundColor(AppColor.deepGreen)
+                            .clipShape(Capsule())
                     }
                 }
             }
@@ -223,13 +238,13 @@ struct EntryRow: View {
     private var kindColor: Color {
         switch entry.kind {
         case "prayer":
-            return .blue
+            return AppColor.sky
         case "journal":
-            return .green
+            return AppColor.primaryGreen
         case "insight":
-            return .orange
+            return AppColor.sunshine
         default:
-            return .gray
+            return AppColor.slate
         }
     }
 }

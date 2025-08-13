@@ -36,6 +36,10 @@
         <attribute name="displayName" optional="YES" attributeType="String"/>
         <attribute name="goals" optional="YES" attributeType="String"/>
         <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="lastActive" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="streakCount" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="weeklyGoal" optional="YES" attributeType="Integer 16" defaultValueString="5" usesScalarValueType="YES"/>
+        <attribute name="weeklyCompleted" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
         <relationship name="answeredPrayers" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="AnsweredPrayer" inverseName="profile" inverseEntity="AnsweredPrayer"/>
         <relationship name="dailyPlans" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="DailyPlan" inverseName="profile" inverseEntity="DailyPlan"/>
         <relationship name="entries" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="Entry" inverseName="profile" inverseEntity="Entry"/>
