@@ -37,37 +37,104 @@ class PlanService: ObservableObject {
         newPlan.status = "active"
         newPlan.profile = profile
 
-        // Try to generate AI content, fall back to placeholders if it fails
-        do {
-            let bits = try await OpenAIClient.devotionalBits(
-                passageRef: passage.reference,
-                passageText: passage.text,
-                recentThemes: Array(allTags.prefix(5))
-            )
-            
-            // Apply content length limits and fallbacks
-            newPlan.application = bits.application.count > 800 ? String(bits.application.prefix(800)) + "…" : bits.application
-            newPlan.prayer = bits.prayer.count > 800 ? String(bits.prayer.prefix(800)) + "…" : bits.prayer
-            
-            // Validate challenge length and ensure it's under 10 minutes
-            var challenge = bits.challenge
-            if challenge.count > 200 {
-                challenge = String(challenge.prefix(200)) + "…"
+        // Check cache first
+        if let cached = AICache.shared.get(ref: passage.reference, day: today) {
+            newPlan.application = cached.application
+            newPlan.prayer = cached.prayer
+            newPlan.challenge = cached.challenge
+            newPlan.crossrefs = cached.crossrefs
+        } else {
+            // Try to generate AI content, fall back to placeholders if it fails
+            do {
+                var bits = try await OpenAIClient.devotionalBits(
+                    passageRef: passage.reference,
+                    passageText: passage.text,
+                    recentThemes: Array(allTags.prefix(5))
+                )
+                
+                // Apply content length limits and fallbacks
+                if bits.application.count > 800 {
+                    bits = OpenAIClient.PlanBits(
+                        application: String(bits.application.prefix(800)) + "…",
+                        prayer: bits.prayer,
+                        challenge: bits.challenge,
+                        crossrefs: bits.crossrefs
+                    )
+                }
+                if bits.prayer.count > 800 {
+                    bits = OpenAIClient.PlanBits(
+                        application: bits.application,
+                        prayer: String(bits.prayer.prefix(800)) + "…",
+                        challenge: bits.challenge,
+                        crossrefs: bits.crossrefs
+                    )
+                }
+                if bits.challenge.count > 200 {
+                    bits = OpenAIClient.PlanBits(
+                        application: bits.application,
+                        prayer: bits.prayer,
+                        challenge: String(bits.challenge.prefix(200)) + "…",
+                        crossrefs: bits.crossrefs
+                    )
+                }
+                
+                // Cache the result
+                AICache.shared.set(ref: passage.reference, day: today, bits: bits)
+                
+                newPlan.application = bits.application
+                newPlan.prayer = bits.prayer
+                newPlan.challenge = bits.challenge
+                newPlan.crossrefs = bits.crossrefs
+            } catch {
+                // One retry after 500ms
+                do {
+                    try await Task.sleep(nanoseconds: 500_000_000)
+                    let bits = try await OpenAIClient.devotionalBits(
+                        passageRef: passage.reference,
+                        passageText: passage.text,
+                        recentThemes: Array(allTags.prefix(5))
+                    )
+                    
+                    // Apply guards and cache
+                    var retryBits = bits
+                    if retryBits.application.count > 800 {
+                        retryBits = OpenAIClient.PlanBits(
+                            application: String(retryBits.application.prefix(800)) + "…",
+                            prayer: retryBits.prayer,
+                            challenge: retryBits.challenge,
+                            crossrefs: retryBits.crossrefs
+                        )
+                    }
+                    if retryBits.prayer.count > 800 {
+                        retryBits = OpenAIClient.PlanBits(
+                            application: retryBits.application,
+                            prayer: String(retryBits.prayer.prefix(800)) + "…",
+                            challenge: retryBits.challenge,
+                            crossrefs: retryBits.crossrefs
+                        )
+                    }
+                    if retryBits.challenge.count > 200 {
+                        retryBits = OpenAIClient.PlanBits(
+                            application: retryBits.application,
+                            prayer: retryBits.prayer,
+                            challenge: String(retryBits.challenge.prefix(200)) + "…",
+                            crossrefs: retryBits.crossrefs
+                        )
+                    }
+                    
+                    AICache.shared.set(ref: passage.reference, day: today, bits: retryBits)
+                    
+                    newPlan.application = retryBits.application
+                    newPlan.prayer = retryBits.prayer
+                    newPlan.challenge = retryBits.challenge
+                    newPlan.crossrefs = retryBits.crossrefs
+                } catch {
+                    // Fallback to placeholders
+                    newPlan.application = "A short reflection on this passage for today."
+                    newPlan.prayer = "Lord, help me trust you and walk in your word today. Amen."
+                    newPlan.challenge = "Spend five quiet minutes praying through this passage."
+                }
             }
-            
-            // Simple validation for challenge duration
-            let timeKeywords = ["hour", "hours", "30 minutes", "45 minutes", "20 minutes", "15 minutes"]
-            if timeKeywords.contains(where: { challenge.lowercased().contains($0) }) {
-                challenge = "Pray through this passage for five minutes and text one encouragement to a friend."
-            }
-            
-            newPlan.challenge = challenge
-            newPlan.crossrefs = bits.crossrefs
-        } catch {
-            // Fallback to placeholders
-            newPlan.application = "A short reflection on this passage for today."
-            newPlan.prayer = "Lord, help me trust you and walk in your word today. Amen."
-            newPlan.challenge = "Spend five quiet minutes praying through this passage."
         }
 
         return newPlan

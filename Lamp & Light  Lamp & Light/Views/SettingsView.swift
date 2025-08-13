@@ -10,6 +10,8 @@ struct SettingsView: View {
     @State private var goals = ""
     @State private var showingExportSheet = false
     @State private var exportData: Data?
+    @State private var showingShareSheet = false
+    @State private var shareImage: UIImage?
     
     var body: some View {
         NavigationView {
@@ -61,12 +63,56 @@ struct SettingsView: View {
                         }
                         .card()
                         
+                        // Weekly Goals Section
+                        VStack(alignment: .leading, spacing: 16) {
+                            Badge(text: "Weekly Goals", color: AppColor.deepGreen)
+                            
+                            if let profile = profile {
+                                VStack(spacing: 12) {
+                                    HStack {
+                                        Text("Weekly Challenge Goal")
+                                            .font(AppFont.body())
+                                            .foregroundColor(AppColor.ink)
+                                        Spacer()
+                                        Text("\(profile.weeklyGoal)")
+                                            .font(AppFont.headline())
+                                            .foregroundColor(AppColor.primaryGreen)
+                                    }
+                                    
+                                    Stepper(
+                                        value: Binding(
+                                            get: { Int(profile.weeklyGoal) },
+                                            set: { 
+                                                profile.weeklyGoal = Int16($0)
+                                                try? viewContext.save()
+                                                UINotificationFeedbackGenerator().notificationOccurred(.success)
+                                            }
+                                        ),
+                                        in: 1...14
+                                    ) {
+                                        Text("Adjust weekly goal")
+                                            .font(AppFont.caption())
+                                            .foregroundColor(AppColor.slate)
+                                    }
+                                }
+                            }
+                        }
+                        .card()
+                        
                         // Data Management Section
                         VStack(alignment: .leading, spacing: 16) {
                             Badge(text: "Data Management", color: AppColor.sky)
                             
-                            PillButton(title: "Export My Data", style: .secondary, systemImage: "square.and.arrow.up") {
-                                exportUserData()
+                            VStack(spacing: 12) {
+                                PillButton(title: "Export My Data", style: .secondary, systemImage: "square.and.arrow.up") {
+                                    exportUserData()
+                                }
+                                
+                                if let profile = profile, profile.streakCount > 0 {
+                                    PillButton(title: "Share My Streak", style: .primary, systemImage: "heart.fill") {
+                                        shareStreak(profile: profile)
+                                    }
+                                }
                             }
                         }
                         .card()
@@ -122,6 +168,11 @@ struct SettingsView: View {
                     ShareSheet(activityItems: [data])
                 }
             }
+            .sheet(isPresented: $showingShareSheet) {
+                if let image = shareImage {
+                    ShareSheet(activityItems: [image])
+                }
+            }
         }
     }
     
@@ -155,6 +206,33 @@ struct SettingsView: View {
         } catch {
             print("Error saving profile: \(error)")
             UINotificationFeedbackGenerator().notificationOccurred(.error)
+        }
+    }
+    
+    private func shareStreak(profile: Profile) {
+        // Get the last completed plan's scripture reference
+        let fetchRequest: NSFetchRequest<DailyPlan> = DailyPlan.fetchRequest()
+        fetchRequest.predicate = NSPredicate(format: "profile == %@ AND status == %@", profile, "done")
+        fetchRequest.sortDescriptors = [NSSortDescriptor(keyPath: \DailyPlan.day, ascending: false)]
+        fetchRequest.fetchLimit = 1
+        
+        let verse = (try? viewContext.fetch(fetchRequest).first?.scriptureRef) ?? "Psalm 46:1-3"
+        
+        // Create the share card
+        let shareCard = ShareCardView(
+            name: profile.displayName ?? "Friend",
+            days: Int(profile.streakCount),
+            verse: verse
+        )
+        
+        // Render to image
+        let renderer = ImageRenderer(content: shareCard)
+        renderer.scale = 3.0
+        
+        if let image = renderer.uiImage {
+            shareImage = image
+            showingShareSheet = true
+            UINotificationFeedbackGenerator().notificationOccurred(.success)
         }
     }
     

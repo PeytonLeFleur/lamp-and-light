@@ -32,6 +32,12 @@ struct Lamp___Light__Lamp___LightApp: App {
                         Text("Timeline")
                     }
                 
+                RecapView()
+                    .tabItem {
+                        Image(systemName: "doc.text.image")
+                        Text("Recap")
+                    }
+                
                 SettingsView()
                     .tabItem {
                         Image(systemName: "gearshape.fill")
