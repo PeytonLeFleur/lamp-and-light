@@ -26,6 +26,7 @@ class PlanService: ObservableObject {
                 allTags.append(contentsOf: tags)
             }
         }
+        let dedupedThemes = Array(Set(allTags)).prefix(5)
 
         let passage = allTags.isEmpty ? scriptureStore.pickRandom() : scriptureStore.pick(byThemes: allTags)
         Log.info("Picked passage \(passage.reference)")
@@ -39,104 +40,45 @@ class PlanService: ObservableObject {
         newPlan.status = "active"
         newPlan.profile = profile
 
-        // Check cache first
-        if let cached = AICache.shared.get(ref: passage.reference, day: today) {
-            Log.info("Using cached AI bits for \(passage.reference)")
+        // Disk cache first
+        if let cached = AICacheStore.shared.load(ref: passage.reference, day: today) {
+            Log.info("Using disk cached AI bits for \(passage.reference)")
             newPlan.application = cached.application
             newPlan.prayer = cached.prayer
             newPlan.challenge = cached.challenge
             newPlan.crossrefs = cached.crossrefs
         } else {
-            // Try to generate AI content, fall back to placeholders if it fails
             do {
                 Log.info("Requesting AI bits for \(passage.reference)")
                 var bits = try await OpenAIClient.devotionalBits(
                     passageRef: passage.reference,
                     passageText: passage.text,
-                    recentThemes: Array(allTags.prefix(5))
+                    recentThemes: Array(dedupedThemes)
                 )
-                
-                // Apply content length limits and fallbacks
-                if bits.application.count > 800 {
-                    bits = OpenAIClient.PlanBits(
-                        application: String(bits.application.prefix(800)) + "…",
-                        prayer: bits.prayer,
-                        challenge: bits.challenge,
-                        crossrefs: bits.crossrefs
-                    )
-                }
-                if bits.prayer.count > 800 {
-                    bits = OpenAIClient.PlanBits(
-                        application: bits.application,
-                        prayer: String(bits.prayer.prefix(800)) + "…",
-                        challenge: bits.challenge,
-                        crossrefs: bits.crossrefs
-                    )
-                }
-                if bits.challenge.count > 200 {
-                    bits = OpenAIClient.PlanBits(
-                        application: bits.application,
-                        prayer: bits.prayer,
-                        challenge: String(bits.challenge.prefix(200)) + "…",
-                        crossrefs: bits.crossrefs
-                    )
-                }
-                
-                // Cache the result
-                AICache.shared.set(ref: passage.reference, day: today, bits: bits)
-                
+                if bits.application.count > 800 { bits = PlanBits(application: String(bits.application.prefix(800)) + "…", prayer: bits.prayer, challenge: bits.challenge, crossrefs: bits.crossrefs) }
+                if bits.prayer.count > 800 { bits = PlanBits(application: bits.application, prayer: String(bits.prayer.prefix(800)) + "…", challenge: bits.challenge, crossrefs: bits.crossrefs) }
+                if bits.challenge.count > 200 { bits = PlanBits(application: bits.application, prayer: bits.prayer, challenge: String(bits.challenge.prefix(200)) + "…", crossrefs: bits.crossrefs) }
+                AICacheStore.shared.save(ref: passage.reference, day: today, bits: bits)
                 newPlan.application = bits.application
                 newPlan.prayer = bits.prayer
                 newPlan.challenge = bits.challenge
                 newPlan.crossrefs = bits.crossrefs
             } catch {
                 Log.error("AI error \(error.localizedDescription)")
-                // One retry after 500ms
                 do {
                     try await Task.sleep(nanoseconds: 500_000_000)
-                    Log.info("Retrying AI bits for \(passage.reference)")
-                    let bits = try await OpenAIClient.devotionalBits(
+                    let bits2 = try await OpenAIClient.devotionalBits(
                         passageRef: passage.reference,
                         passageText: passage.text,
-                        recentThemes: Array(allTags.prefix(5))
+                        recentThemes: Array(dedupedThemes)
                     )
-                    
-                    // Apply guards and cache
-                    var retryBits = bits
-                    if retryBits.application.count > 800 {
-                        retryBits = OpenAIClient.PlanBits(
-                            application: String(retryBits.application.prefix(800)) + "…",
-                            prayer: retryBits.prayer,
-                            challenge: retryBits.challenge,
-                            crossrefs: retryBits.crossrefs
-                        )
-                    }
-                    if retryBits.prayer.count > 800 {
-                        retryBits = OpenAIClient.PlanBits(
-                            application: retryBits.application,
-                            prayer: String(retryBits.prayer.prefix(800)) + "…",
-                            challenge: retryBits.challenge,
-                            crossrefs: retryBits.crossrefs
-                        )
-                    }
-                    if retryBits.challenge.count > 200 {
-                        retryBits = OpenAIClient.PlanBits(
-                            application: retryBits.application,
-                            prayer: retryBits.prayer,
-                            challenge: String(retryBits.challenge.prefix(200)) + "…",
-                            crossrefs: retryBits.crossrefs
-                        )
-                    }
-                    
-                    AICache.shared.set(ref: passage.reference, day: today, bits: retryBits)
-                    
-                    newPlan.application = retryBits.application
-                    newPlan.prayer = retryBits.prayer
-                    newPlan.challenge = retryBits.challenge
-                    newPlan.crossrefs = retryBits.crossrefs
+                    AICacheStore.shared.save(ref: passage.reference, day: today, bits: bits2)
+                    newPlan.application = bits2.application
+                    newPlan.prayer = bits2.prayer
+                    newPlan.challenge = bits2.challenge
+                    newPlan.crossrefs = bits2.crossrefs
                 } catch {
                     Log.error("AI retry failed \(error.localizedDescription)")
-                    // Fallback to placeholders
                     newPlan.application = "A short reflection on this passage for today."
                     newPlan.prayer = "Lord, help me trust you and walk in your word today. Amen."
                     newPlan.challenge = "Spend five quiet minutes praying through this passage."

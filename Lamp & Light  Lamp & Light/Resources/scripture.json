@@ -1,14 +1,86 @@
 [
-  {"reference":"Psalm 23:1-6","text":"The Lord is my shepherd; I shall not want...","themes":["guidance","trust","rest"],"crossrefs":["John 10:11"]},
-  {"reference":"Psalm 27:1","text":"The Lord is my light and my salvation; whom shall I fear?","themes":["fear","courage","trust"],"crossrefs":["Isaiah 41:10"]},
-  {"reference":"Psalm 34:17-18","text":"When the righteous cry for help, the Lord hears...","themes":["pain","comfort","prayer"],"crossrefs":["Matthew 5:4"]},
-  {"reference":"Psalm 46:1-3","text":"God is our refuge and strength, a very present help in trouble.","themes":["anxiety","refuge","strength"],"crossrefs":["Philippians 4:6-7"]},
-  {"reference":"Psalm 121:1-2","text":"I lift up my eyes to the hills. From where does my help come?","themes":["help","trust","journey"],"crossrefs":["Hebrews 13:6"]},
-  {"reference":"Matthew 5:1-12","text":"The Beatitudes...","themes":["character","kingdom","hope"],"crossrefs":["Luke 6:20-23"]},
-  {"reference":"Matthew 6:25-34","text":"Do not be anxious about your life...","themes":["anxiety","provision","trust"],"crossrefs":["1 Peter 5:7"]},
-  {"reference":"John 14:1-7","text":"Let not your hearts be troubled...","themes":["comfort","way","faith"],"crossrefs":["Hebrews 10:19-22"]},
-  {"reference":"Romans 8:28-39","text":"We know that for those who love God all things work together for good...","themes":["assurance","love","purpose"],"crossrefs":["Jeremiah 29:11"]},
-  {"reference":"Philippians 4:4-9","text":"Rejoice in the Lord always...","themes":["joy","peace","thoughts"],"crossrefs":["Isaiah 26:3"]},
-  {"reference":"James 1:2-5","text":"Count it all joy, my brothers, when you meet trials...","themes":["trials","wisdom","endurance"],"crossrefs":["Romans 5:3-5"]},
-  {"reference":"1 Peter 5:6-10","text":"Humble yourselves... casting all your anxieties on him...","themes":["humility","anxiety","restoration"],"crossrefs":["Psalm 55:22"]}
+  {
+    "reference": "Psalm 23:1-6",
+    "text": "The LORD is my shepherd; I shall not want. He maketh me to lie down in green pastures: he leadeth me beside the still waters. He restoreth my soul: he leadeth me in the paths of righteousness for his name's sake. Yea, though I walk through the valley of the shadow of death, I will fear no evil: for thou art with me; thy rod and thy staff they comfort me. Thou preparest a table before me in the presence of mine enemies: thou anointest my head with oil; my cup runneth over. Surely goodness and mercy shall follow me all the days of my life: and I will dwell in the house of the LORD for ever.",
+    "themes": ["guidance","trust","rest"],
+    "crossrefs": ["John 10:11"],
+    "attribution": "King James Version, Public Domain"
+  },
+  {
+    "reference": "Psalm 27:1-3",
+    "text": "The LORD is my light and my salvation; whom shall I fear? the LORD is the strength of my life; of whom shall I be afraid? When the wicked, even mine enemies and my foes, came upon me to eat up my flesh, they stumbled and fell. Though an host should encamp against me, my heart shall not fear: though war should rise against me, in this will I be confident.",
+    "themes": ["fear","courage","trust"],
+    "crossrefs": ["Isaiah 41:10"],
+    "attribution": "King James Version, Public Domain"
+  },
+  {
+    "reference": "Psalm 34:17-19",
+    "text": "The righteous cry, and the LORD heareth, and delivereth them out of all their troubles. The LORD is nigh unto them that are of a broken heart; and saveth such as be of a contrite spirit. Many are the afflictions of the righteous: but the LORD delivereth him out of them all.",
+    "themes": ["pain","comfort","prayer"],
+    "crossrefs": ["Matthew 5:4"],
+    "attribution": "King James Version, Public Domain"
+  },
+  {
+    "reference": "Psalm 46:1-3",
+    "text": "God is our refuge and strength, a very present help in trouble. Therefore will not we fear, though the earth be removed, and though the mountains be carried into the midst of the sea; Though the waters thereof roar and be troubled, though the mountains shake with the swelling thereof. Selah.",
+    "themes": ["anxiety","refuge","strength"],
+    "crossrefs": ["Philippians 4:6-7"],
+    "attribution": "King James Version, Public Domain"
+  },
+  {
+    "reference": "Psalm 121:1-4",
+    "text": "I will lift up mine eyes unto the hills, from whence cometh my help. My help cometh from the LORD, which made heaven and earth. He will not suffer thy foot to be moved: he that keepeth thee will not slumber. Behold, he that keepeth Israel shall neither slumber nor sleep.",
+    "themes": ["help","trust","journey"],
+    "crossrefs": ["Hebrews 13:6"],
+    "attribution": "King James Version, Public Domain"
+  },
+  {
+    "reference": "Matthew 5:3-10",
+    "text": "Blessed are the poor in spirit: for theirs is the kingdom of heaven. Blessed are they that mourn: for they shall be comforted. Blessed are the meek: for they shall inherit the earth. Blessed are they which do hunger and thirst after righteousness: for they shall be filled. Blessed are the merciful: for they shall obtain mercy. Blessed are the pure in heart: for they shall see God. Blessed are the peacemakers: for they shall be called the children of God. Blessed are they which are persecuted for righteousness' sake: for theirs is the kingdom of heaven.",
+    "themes": ["character","kingdom","hope"],
+    "crossrefs": ["Luke 6:20-23"],
+    "attribution": "King James Version, Public Domain"
+  },
+  {
+    "reference": "Matthew 6:25-34",
+    "text": "Therefore I say unto you, Take no thought for your life, what ye shall eat, or what ye shall drink; nor yet for your body, what ye shall put on. Is not the life more than meat, and the body than raiment? Behold the fowls of the air: for they sow not, neither do they reap, nor gather into barns; yet your heavenly Father feedeth them. Are ye not much better than they? Which of you by taking thought can add one cubit unto his stature? And why take ye thought for raiment? Consider the lilies of the field, how they grow; they toil not, neither do they spin. And yet I say unto you, That even Solomon in all his glory was not arrayed like one of these. Wherefore, if God so clothe the grass of the field, which to day is, and to morrow is cast into the oven, shall he not much more clothe you, O ye of little faith? Therefore take no thought, saying, What shall we eat? or, What shall we drink? or, Wherewithal shall we be clothed? For after all these things do the Gentiles seek. For your heavenly Father knoweth that ye have need of all these things. But seek ye first the kingdom of God, and his righteousness; and all these things shall be added unto you. Take therefore no thought for the morrow: for the morrow shall take thought for the things of itself. Sufficient unto the day is the evil thereof.",
+    "themes": ["anxiety","provision","trust"],
+    "crossrefs": ["1 Peter 5:7"],
+    "attribution": "King James Version, Public Domain"
+  },
+  {
+    "reference": "John 14:1-7",
+    "text": "Let not your heart be troubled: ye believe in God, believe also in me. In my Father's house are many mansions: if it were not so, I would have told you. I go to prepare a place for you. And if I go and prepare a place for you, I will come again, and receive you unto myself; that where I am, there ye may be also. And whither I go ye know, and the way ye know. Thomas saith unto him, Lord, we know not whither thou goest; and how can we know the way? Jesus saith unto him, I am the way, the truth, and the life: no man cometh unto the Father, but by me.",
+    "themes": ["comfort","way","faith"],
+    "crossrefs": ["Hebrews 10:19-22"],
+    "attribution": "King James Version, Public Domain"
+  },
+  {
+    "reference": "Romans 8:28-30",
+    "text": "And we know that all things work together for good to them that love God, to them who are the called according to his purpose. For whom he did foreknow, he also did predestinate to be conformed to the image of his Son, that he might be the firstborn among many brethren. Moreover whom he did predestinate, them he also called: and whom he called, them he also justified: and whom he justified, them he also glorified.",
+    "themes": ["assurance","love","purpose"],
+    "crossrefs": ["Jeremiah 29:11"],
+    "attribution": "King James Version, Public Domain"
+  },
+  {
+    "reference": "Philippians 4:4-9",
+    "text": "Rejoice in the Lord alway: and again I say, Rejoice. Let your moderation be known unto all men. The Lord is at hand. Be careful for nothing; but in every thing by prayer and supplication with thanksgiving let your requests be made known unto God. And the peace of God, which passeth all understanding, shall keep your hearts and minds through Christ Jesus. Finally, brethren, whatsoever things are true, whatsoever things are honest, whatsoever things are just, whatsoever things are pure, whatsoever things are lovely, whatsoever things are of good report; if there be any virtue, and if there be any praise, think on these things. Those things, which ye have both learned, and received, and heard, and seen in me, do: and the God of peace shall be with you.",
+    "themes": ["joy","peace","thoughts"],
+    "crossrefs": ["Isaiah 26:3"],
+    "attribution": "King James Version, Public Domain"
+  },
+  {
+    "reference": "James 1:2-5",
+    "text": "My brethren, count it all joy when ye fall into divers temptations; Knowing this, that the trying of your faith worketh patience. But let patience have her perfect work, that ye may be perfect and entire, wanting nothing. If any of you lack wisdom, let him ask of God, that giveth to all men liberally, and upbraideth not; and it shall be given him.",
+    "themes": ["trials","wisdom","endurance"],
+    "crossrefs": ["Romans 5:3-5"],
+    "attribution": "King James Version, Public Domain"
+  },
+  {
+    "reference": "1 Peter 5:6-10",
+    "text": "Humble yourselves therefore under the mighty hand of God, that he may exalt you in due time: Casting all your care upon him; for he careth for you. Be sober, be vigilant; because your adversary the devil, as a roaring lion, walketh about, seeking whom he may devour: Whom resist stedfast in the faith, knowing that the same afflictions are accomplished in your brethren that are in the world. But the God of all grace, who hath called us unto his eternal glory by Christ Jesus, after that ye have suffered a while, make you perfect, stablish, strengthen, settle you.",
+    "themes": ["humility","anxiety","restoration"],
+    "crossrefs": ["Psalm 55:22"],
+    "attribution": "King James Version, Public Domain"
+  }
 ] 

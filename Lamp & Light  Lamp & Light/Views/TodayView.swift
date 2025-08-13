@@ -40,10 +40,15 @@ struct TodayView: View {
                             }
                             
                             DisclosureGroup("Read passage") {
-                                Text(plan.scriptureText ?? "")
-                                    .font(AppFont.body())
-                                    .foregroundColor(AppColor.slate)
-                                    .padding(.top, 8)
+                                VStack(alignment: .leading, spacing: 6) {
+                                    Text(plan.scriptureText ?? "")
+                                        .font(AppFont.body())
+                                        .foregroundColor(AppColor.slate)
+                                    Text("Text KJV Public Domain")
+                                        .font(AppFont.caption())
+                                        .foregroundColor(.secondary)
+                                }
+                                .padding(.top, 8)
                                 
                                 if let crossrefs = plan.crossrefs, !crossrefs.isEmpty {
                                     Text("Cross-references: \(crossrefs.joined(separator: ", "))")
