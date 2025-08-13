@@ -20,72 +20,49 @@ struct JournalView: View {
                     VStack(alignment: .leading, spacing: 16) {
                         Badge(text: "New Entry", color: AppColor.primaryGreen)
                         
-                        // Kind Selection
                         Picker("Entry Type", selection: $selectedKind) {
                             ForEach(entryKinds, id: \.self) { kind in
-                                Text(kind.capitalized)
-                                    .tag(kind)
+                                Text(kind.capitalized).tag(kind)
                             }
                         }
                         .pickerStyle(SegmentedPickerStyle())
                         .padding(.horizontal)
                         
-                        // Content Editor
                         VStack(alignment: .leading, spacing: 8) {
-                            Text("Content")
-                                .font(AppFont.headline())
-                                .foregroundColor(AppColor.ink)
-                            
+                            Text("Content").font(AppFont.headline()).foregroundColor(AppColor.ink)
                             TextEditor(text: $content)
                                 .frame(minHeight: 120)
                                 .padding(12)
                                 .background(AppColor.mist)
                                 .cornerRadius(16)
-                                .overlay(
-                                    RoundedRectangle(cornerRadius: 16)
-                                        .stroke(AppColor.softGreen.opacity(0.3), lineWidth: 1)
-                                )
+                                .overlay(RoundedRectangle(cornerRadius: 16).stroke(AppColor.softGreen.opacity(0.3), lineWidth: 1))
+                                .accessibilityLabel(Text("Entry content"))
                         }
                         .padding(.horizontal)
                         
-                        // Optional Fields
                         HStack {
                             VStack(alignment: .leading, spacing: 8) {
-                                Text("Emotion")
-                                    .font(AppFont.headline())
-                                    .foregroundColor(AppColor.ink)
-                                
+                                Text("Emotion").font(AppFont.headline()).foregroundColor(AppColor.ink)
                                 TextField("How are you feeling?", text: $emotion)
                                     .textFieldStyle(RoundedBorderTextFieldStyle())
-                                    .overlay(
-                                        RoundedRectangle(cornerRadius: 8)
-                                            .stroke(AppColor.softGreen.opacity(0.3), lineWidth: 1)
-                                    )
+                                    .overlay(RoundedRectangle(cornerRadius: 8).stroke(AppColor.softGreen.opacity(0.3), lineWidth: 1))
                             }
                             
                             VStack(alignment: .leading, spacing: 8) {
-                                Text("Tags")
-                                    .font(AppFont.headline())
-                                    .foregroundColor(AppColor.ink)
-                                
+                                Text("Tags").font(AppFont.headline()).foregroundColor(AppColor.ink)
                                 TextField("faith, trust, hope", text: $tags)
                                     .textFieldStyle(RoundedBorderTextFieldStyle())
-                                    .overlay(
-                                        RoundedRectangle(cornerRadius: 8)
-                                            .stroke(AppColor.softGreen.opacity(0.3), lineWidth: 1)
-                                    )
+                                    .overlay(RoundedRectangle(cornerRadius: 8).stroke(AppColor.softGreen.opacity(0.3), lineWidth: 1))
                             }
                         }
                         .padding(.horizontal)
                         
-                        // Save Button
                         PillButton(title: "Save Entry", style: .primary, systemImage: "plus.circle.fill") {
-                            withAnimation(.spring(response: 0.4, dampingFraction: 0.8)) {
-                                saveEntry()
-                            }
+                            withAnimation(.spring(response: 0.4, dampingFraction: 0.8)) { saveEntry() }
                         }
                         .disabled(content.isEmpty)
                         .padding(.horizontal)
+                        .accessibilityHint(Text("Saves your journal entry"))
                     }
                     .card()
                     
@@ -94,25 +71,15 @@ struct JournalView: View {
                         Badge(text: "Today's Entries", color: AppColor.sky)
                         
                         if todayEntries.isEmpty {
-                            VStack(spacing: 16) {
-                                Image(systemName: "book.closed")
-                                    .font(.system(size: 50))
-                                    .foregroundColor(AppColor.slate.opacity(0.3))
-                                Text("No entries yet today")
-                                    .font(AppFont.headline())
-                                    .foregroundColor(AppColor.slate)
-                                Text("Start your spiritual journey with your first entry")
-                                    .font(AppFont.body())
-                                    .foregroundColor(AppColor.slate.opacity(0.7))
-                                    .multilineTextAlignment(.center)
+                            EmptyStateView(title: "Start your journal", message: "Write a short prayer or note for today.", actionTitle: "Add entry") {
+                                // focus editor hint: no direct focus API, ensure visible
                             }
                             .frame(maxWidth: .infinity)
-                            .padding(.vertical, 40)
+                            .padding(.vertical, 20)
                         } else {
                             LazyVStack(spacing: 12) {
                                 ForEach(todayEntries) { entry in
-                                    EntryRow(entry: entry)
-                                        .card()
+                                    EntryRow(entry: entry).card()
                                 }
                             }
                         }
@@ -122,10 +89,7 @@ struct JournalView: View {
                 }
             }
             .navigationTitle("Journal")
-            .onAppear {
-                loadProfile()
-                loadTodayEntries()
-            }
+            .onAppear { loadProfile(); loadTodayEntries() }
         }
     }
     

@@ -21,6 +21,15 @@ struct PillButton: View {
             .shadow(color: background.opacity(0.35), radius: 10, x: 0, y: 6)
         }
         .buttonStyle(.plain)
+        .accessibilityElement()
+        .accessibilityLabel(Text(title))
+        .accessibilityHint(Text({
+            switch style {
+            case .primary: return "Primary action"
+            case .secondary: return "Secondary action"
+            case .danger: return "Danger action"
+            }
+        }()))
         .contentShape(Rectangle())
     }
 

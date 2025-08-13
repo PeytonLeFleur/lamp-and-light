@@ -35,6 +35,17 @@ struct SettingsView: View {
                             }
                         }.card()
                         
+                        // Privacy
+                        VStack(alignment: .leading, spacing: 10) {
+                            Badge(text: "Privacy")
+                            Toggle("Allow anonymous analytics", isOn: Binding(
+                                get: { PrivacySettings.analyticsEnabled },
+                                set: { PrivacySettings.analyticsEnabled = $0 }
+                            ))
+                            .tint(AppColor.primaryGreen)
+                            Text("Helps improve the app. No personal text is sent.").font(AppFont.caption()).foregroundColor(.secondary)
+                        }.card()
+                        
                         // About & Legal
                         VStack(alignment: .leading, spacing: 10) {
                             Badge(text: "About & Legal")

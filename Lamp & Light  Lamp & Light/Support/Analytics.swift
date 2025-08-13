@@ -9,6 +9,7 @@ enum Analytics {
         }
     }
     static func track(_ event: String, _ payload: [String: String] = [:]) {
+        guard PrivacySettings.analyticsEnabled else { return }
         TelemetryManager.send(event: event, with: payload)
     }
 }

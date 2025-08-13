@@ -10,5 +10,8 @@ struct Badge: View {
             .background(color.opacity(0.6))
             .foregroundColor(AppColor.ink)
             .clipShape(Capsule())
+            .accessibilityElement(children: .ignore)
+            .accessibilityLabel(Text(text))
+            .accessibilityAddTraits(.isStaticText)
     }
 } 

@@ -11,20 +11,8 @@ struct TimelineView: View {
             AppBackground {
                 Group {
                     if timelineItems.isEmpty {
-                        VStack(spacing: 20) {
-                            Image(systemName: "clock")
-                                .font(.system(size: 60))
-                                .foregroundColor(AppColor.slate.opacity(0.3))
-                            Text("No timeline items yet")
-                                .font(AppFont.headline())
-                                .foregroundColor(AppColor.ink)
-                            Text("Your journal entries and daily plans will appear here")
-                                .font(AppFont.body())
-                                .foregroundColor(AppColor.slate)
-                                .multilineTextAlignment(.center)
-                                .padding(.horizontal)
-                        }
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        EmptyStateView(title: "Your journey begins here", message: "Entries and plans will appear as you use the app.")
+                            .frame(maxWidth: .infinity, maxHeight: .infinity)
                     } else {
                         ScrollView {
                             LazyVStack(spacing: 16) {

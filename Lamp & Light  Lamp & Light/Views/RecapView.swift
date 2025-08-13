@@ -23,30 +23,24 @@ struct RecapView: View {
                         .card()
                     }
                 } else {
-                    VStack(spacing: 20) {
-                        Image(systemName: "doc.text.image")
-                            .font(.system(size: 60))
-                            .foregroundColor(AppColor.slate.opacity(0.3))
-                        
-                        Text("No recap yet this week")
-                            .font(AppFont.headline())
-                            .foregroundColor(AppColor.ink)
-                        
-                        Text("Generate a weekly recap to see your spiritual journey highlights")
-                            .font(AppFont.body())
-                            .foregroundColor(AppColor.slate)
-                            .multilineTextAlignment(.center)
-                            .padding(.horizontal)
-                        
-                        PillButton(title: "Generate Recap", style: .primary, systemImage: "arrow.triangle.2.circlepath.circle.fill") {
-                            FeatureGate.requirePremium(isPremium: PurchaseManager.shared.isPremium, action: {
-                                generate()
-                            }, showPaywall: {
-                                presentPaywall = true
-                            })
+                    let isSunday = Calendar.current.component(.weekday, from: Date()) == 1
+                    if isSunday {
+                        VStack(spacing: 20) {
+                            Image(systemName: "doc.text.image")
+                                .font(.system(size: 60))
+                                .foregroundColor(AppColor.slate.opacity(0.3))
+                            Text("No recap yet this week").font(AppFont.headline()).foregroundColor(AppColor.ink)
+                            Text("Generate a weekly recap to see your spiritual journey highlights")
+                                .font(AppFont.body()).foregroundColor(AppColor.slate).multilineTextAlignment(.center).padding(.horizontal)
+                            PillButton(title: "Generate Recap", style: .primary, systemImage: "arrow.triangle.2.circlepath.circle.fill") {
+                                FeatureGate.requirePremium(isPremium: PurchaseManager.shared.isPremium, action: { generate() }, showPaywall: { presentPaywall = true })
+                            }
                         }
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    } else {
+                        EmptyStateView(title: "No recap yet", message: "Your weekly recap appears on Sunday.")
+                            .frame(maxWidth: .infinity, maxHeight: .infinity)
                     }
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
                 }
                 
                 Spacer()

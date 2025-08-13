@@ -5,6 +5,7 @@ struct TodayView: View {
     @Environment(\.managedObjectContext) private var viewContext
     @StateObject private var planService = PlanService()
     @StateObject private var confetti = ConfettiHost()
+    @StateObject private var net = NetworkMonitor.shared
     @State private var dailyPlan: DailyPlan?
     @State private var profile: Profile?
     @State private var showingScriptureExpanded = false
@@ -13,11 +14,18 @@ struct TodayView: View {
     @State private var whyReasons: [String] = []
     @State private var whyThemes: [String] = []
     @State private var presentPaywall = false
+    @State private var didCelebrate = false
     
     var body: some View {
         NavigationView {
             AppBackground {
                 VStack(spacing: 14) {
+                    if !net.isOnline {
+                        Text("You are offline. Using saved plan and placeholders.")
+                            .font(AppFont.caption())
+                            .foregroundColor(.secondary)
+                            .card()
+                    }
                     if let plan = dailyPlan, let profile = profile {
                         StreakHeader(name: profile.displayName ?? "Friend", days: Int(profile.streakCount))
                         
@@ -26,25 +34,31 @@ struct TodayView: View {
                             HStack {
                                 Badge(text: "Scripture")
                                 Spacer()
-                                // Copy reference
                                 Button {
                                     UIPasteboard.general.string = plan.scriptureRef
                                     UINotificationFeedbackGenerator().notificationOccurred(.success)
                                 } label: { Image(systemName: "doc.on.doc").foregroundColor(AppColor.primaryGreen) }
-                                // Why this passage
+                                .accessibilityLabel(Text("Copy reference"))
+                                .accessibilityHint(Text("Copies the passage reference"))
                                 Button { presentWhy(plan: plan, profile: profile) } label: { Image(systemName: "info.circle").foregroundColor(AppColor.slate) }
+                                .accessibilityLabel(Text("Why this passage"))
+                                .accessibilityHint(Text("Shows reasons based on your recent entries"))
                             }
                             HStack(alignment: .firstTextBaseline, spacing: 8) {
                                 Text(plan.scriptureRef ?? "")
-                                    .font(AppFont.title())
+                                    .font(.title) // allow Dynamic Type scaling
                                     .foregroundColor(AppColor.ink)
+                                    .minimumScaleFactor(0.9)
+                                    .lineLimit(2)
                             }
                             
                             DisclosureGroup("Read passage") {
                                 VStack(alignment: .leading, spacing: 6) {
                                     Text(plan.scriptureText ?? "")
-                                        .font(AppFont.body())
+                                        .font(.body)
                                         .foregroundColor(AppColor.slate)
+                                        .minimumScaleFactor(0.9)
+                                        .lineLimit(nil)
                                     Text("Text KJV Public Domain")
                                         .font(AppFont.caption())
                                         .foregroundColor(.secondary)
@@ -65,8 +79,10 @@ struct TodayView: View {
                         VStack(alignment: .leading, spacing: 10) {
                             Badge(text: "Application", color: AppColor.sky.opacity(0.5))
                             Text(plan.application ?? "")
-                                .font(AppFont.body())
+                                .font(.body)
                                 .foregroundColor(AppColor.ink)
+                                .minimumScaleFactor(0.9)
+                                .lineLimit(nil)
                             
                             PillButton(title: "Refresh Application", style: .secondary, systemImage: "arrow.triangle.2.circlepath") {
                                 FeatureGate.requirePremium(isPremium: PurchaseManager.shared.isPremium, action: {
@@ -82,11 +98,14 @@ struct TodayView: View {
                         VStack(alignment: .leading, spacing: 10) {
                             Badge(text: "Prayer", color: AppColor.sunshine.opacity(0.5))
                             Text(plan.prayer ?? "")
-                                .font(AppFont.body())
+                                .font(.body)
                                 .foregroundColor(AppColor.ink)
+                                .minimumScaleFactor(0.9)
+                                .lineLimit(nil)
                                 .italic()
                             HStack {
                                 PillButton(title: "Copy Prayer", style: .secondary, systemImage: "doc.on.doc") { copyPrayer() }
+                                .accessibilityLabel(Text("Copy prayer"))
                             }
                         }
                         .card()
@@ -95,8 +114,10 @@ struct TodayView: View {
                         VStack(alignment: .leading, spacing: 10) {
                             Badge(text: "Challenge", color: AppColor.softGreen)
                             Text(plan.challenge ?? "")
-                                .font(AppFont.body())
+                                .font(.body)
                                 .foregroundColor(AppColor.ink)
+                                .minimumScaleFactor(0.9)
+                                .lineLimit(nil)
                             
                             HStack(spacing: 12) {
                                 PillButton(title: "Mark Done", style: .primary, systemImage: "checkmark.seal.fill") {
@@ -104,11 +125,13 @@ struct TodayView: View {
                                         markChallengeComplete(plan, profile: profile)
                                     }
                                 }
+                                .accessibilityLabel(Text("Mark challenge done"))
                                 PillButton(title: "Skip", style: .danger, systemImage: "xmark") {
                                     withAnimation(.spring(response: 0.4, dampingFraction: 0.8)) {
                                         markChallengeSkipped(plan)
                                     }
                                 }
+                                .accessibilityLabel(Text("Skip challenge"))
                             }
                         }
                         .card()
@@ -133,43 +156,19 @@ struct TodayView: View {
                         
                         Spacer(minLength: 6)
                     } else if isLoadingPlan {
-                        VStack(spacing: 20) {
-                            ProgressView()
-                                .scaleEffect(1.5)
-                                .tint(AppColor.primaryGreen)
-                            Text("Generating today's plan...")
-                                .font(AppFont.headline())
-                                .foregroundColor(AppColor.slate)
-                            Text("AI is crafting personalized content for you")
-                                .font(AppFont.body())
-                                .foregroundColor(AppColor.slate.opacity(0.7))
-                                .multilineTextAlignment(.center)
-                        }
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        LoadingCard(text: "Generating today's plan…")
+                            .frame(maxWidth: .infinity, maxHeight: .infinity)
                     } else {
-                        VStack(spacing: 20) {
-                            ProgressView()
-                                .scaleEffect(1.5)
-                                .tint(AppColor.primaryGreen)
-                            Text("Loading today's plan...")
-                                .font(AppFont.headline())
-                                .foregroundColor(AppColor.slate)
-                        }
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        LoadingCard(text: "Loading today's plan…")
+                            .frame(maxWidth: .infinity, maxHeight: .infinity)
                     }
                 }
             }
             .overlay(ConfettiHosting(host: confetti).allowsHitTesting(false))
             .navigationTitle("Today")
-            .task {
-                await loadProfileAndPlan()
-            }
-            .sheet(isPresented: $showWhySheet) {
-                WhyThisPassageSheet(reference: dailyPlan?.scriptureRef ?? "", themes: whyThemes, reasons: whyReasons)
-            }
-            .sheet(isPresented: $presentPaywall) {
-                PaywallView()
-            }
+            .task { await loadProfileAndPlan() }
+            .sheet(isPresented: $showWhySheet) { WhyThisPassageSheet(reference: dailyPlan?.scriptureRef ?? "", themes: whyThemes, reasons: whyReasons) }
+            .sheet(isPresented: $presentPaywall) { PaywallView() }
         }
     }
     
@@ -268,7 +267,10 @@ struct TodayView: View {
         
         // Celebrate with haptics and confetti
         UINotificationFeedbackGenerator().notificationOccurred(.success)
-        confetti.fire()
+        if !ReduceMotion.isOn { confetti.fire() } else {
+            withAnimation(.easeInOut(duration: 0.5)) { didCelebrate.toggle() }
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) { didCelebrate.toggle() }
+        }
     }
     
     private func markChallengeSkipped(_ plan: DailyPlan) {
