@@ -5,6 +5,7 @@ struct RecapView: View {
     @Environment(\.managedObjectContext) private var context
     @FetchRequest(sortDescriptors: []) private var profiles: FetchedResults<Profile>
     @State private var recap: WeeklyRecap?
+    @State private var presentPaywall = false
 
     var body: some View {
         AppBackground {
@@ -38,7 +39,11 @@ struct RecapView: View {
                             .padding(.horizontal)
                         
                         PillButton(title: "Generate Recap", style: .primary, systemImage: "arrow.triangle.2.circlepath.circle.fill") {
-                            generate()
+                            FeatureGate.requirePremium(isPremium: PurchaseManager.shared.isPremium, action: {
+                                generate()
+                            }, showPaywall: {
+                                presentPaywall = true
+                            })
                         }
                     }
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -49,6 +54,7 @@ struct RecapView: View {
         }
         .navigationTitle("Recap")
         .task { loadLatest() }
+        .sheet(isPresented: $presentPaywall) { PaywallView() }
     }
 
     private func loadLatest() {

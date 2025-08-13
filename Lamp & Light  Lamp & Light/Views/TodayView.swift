@@ -12,6 +12,7 @@ struct TodayView: View {
     @State private var showWhySheet = false
     @State private var whyReasons: [String] = []
     @State private var whyThemes: [String] = []
+    @State private var presentPaywall = false
     
     var body: some View {
         NavigationView {
@@ -68,7 +69,11 @@ struct TodayView: View {
                                 .foregroundColor(AppColor.ink)
                             
                             PillButton(title: "Refresh Application", style: .secondary, systemImage: "arrow.triangle.2.circlepath") {
-                                regenerateBits(keeping: plan)
+                                FeatureGate.requirePremium(isPremium: PurchaseManager.shared.isPremium, action: {
+                                    regenerateBits(keeping: plan)
+                                }, showPaywall: {
+                                    presentPaywall = true
+                                })
                             }
                         }
                         .card()
@@ -161,6 +166,9 @@ struct TodayView: View {
             }
             .sheet(isPresented: $showWhySheet) {
                 WhyThisPassageSheet(reference: dailyPlan?.scriptureRef ?? "", themes: whyThemes, reasons: whyReasons)
+            }
+            .sheet(isPresented: $presentPaywall) {
+                PaywallView()
             }
         }
     }

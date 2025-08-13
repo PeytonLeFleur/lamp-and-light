@@ -18,12 +18,23 @@ struct SettingsView: View {
     @State private var notifMinute = 0
     @State private var exportURL: URL?
     @State private var showFileShare = false
+    @State private var presentPaywall = false
     
     var body: some View {
         NavigationView {
             AppBackground {
                 ScrollView {
                     VStack(spacing: 20) {
+                        // Subscription card
+                        VStack(alignment: .leading, spacing: 10) {
+                            Badge(text: "Subscription")
+                            Text(PurchaseManager.shared.isPremium ? "Premium active" : "Free").font(AppFont.body())
+                            HStack(spacing: 12) {
+                                PillButton(title: "Manage", style: .secondary, systemImage: "crown.fill") { presentPaywall = true }
+                                PillButton(title: "Restore", style: .secondary, systemImage: "arrow.clockwise") { Task { await PurchaseManager.shared.restore() } }
+                            }
+                        }.card()
+                        
                         // Profile Information Section
                         VStack(alignment: .leading, spacing: 16) {
                             Badge(text: "Profile Information", color: AppColor.primaryGreen)
@@ -174,22 +185,13 @@ struct SettingsView: View {
                 }
             }
             .navigationTitle("Settings")
-            .onAppear {
-                loadProfile()
-            }
+            .onAppear { loadProfile() }
             .onChange(of: displayName) { _, _ in saveProfile() }
             .onChange(of: denomination) { _, _ in saveProfile() }
             .onChange(of: goals) { _, _ in saveProfile() }
-            .sheet(isPresented: $showingExportSheet) {
-                if let data = exportData {
-                    ShareSheet(activityItems: [data])
-                }
-            }
-            .sheet(isPresented: $showingShareSheet) {
-                if let image = shareImage {
-                    ShareSheet(activityItems: [image])
-                }
-            }
+            .sheet(isPresented: $showingExportSheet) { if let data = exportData { ShareSheet(activityItems: [data]) } }
+            .sheet(isPresented: $showingShareSheet) { if let image = shareImage { ShareSheet(activityItems: [image]) } }
+            .sheet(isPresented: $presentPaywall) { PaywallView() }
         }
     }
     
