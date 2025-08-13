@@ -29,9 +29,8 @@ class PlanService: ObservableObject {
 
         var allTags: [String] = []
         for entry in recentEntries {
-            if let tags = entry.tags {
-                allTags.append(contentsOf: tags)
-            }
+            let tags = (entry.tags as? [String]) ?? []
+            allTags.append(contentsOf: tags)
         }
         let dedupedThemes = Array(Set(allTags)).prefix(5)
 
@@ -55,6 +54,13 @@ class PlanService: ObservableObject {
             newPlan.challenge = cached.challenge
             newPlan.crossrefs = cached.crossrefs
         } else {
+            // Offline guard: use placeholders if offline
+            if NetworkMonitor.shared.isOnline == false {
+                newPlan.application = "A short reflection on this passage for today."
+                newPlan.prayer = "Lord, help me trust you and walk in your word today. Amen."
+                newPlan.challenge = "Spend five quiet minutes praying through this passage."
+                return newPlan
+            }
             do {
                 Log.info("Requesting AI bits for \(passage.reference)")
                 var bits = try await OpenAIClient.devotionalBits(

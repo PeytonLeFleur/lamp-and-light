@@ -2,9 +2,12 @@ import CoreData
 import Foundation
 import UniformTypeIdentifiers
 
+private let iso = ISO8601DateFormatter()
+
 enum BackupService {
     static func exportAll(context: NSManagedObjectContext, profile: Profile) throws -> URL {
-        let tmp = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent("LampAndLight-\(UUID().uuidString).json")
+        let stamp = iso.string(from: Date())
+        let tmp = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent("LampAndLight-\(stamp).json")
         var payload: [String: Any] = [:]
 
         func fetch<T: NSManagedObject>(_ req: NSFetchRequest<T>) -> [T] { (try? context.fetch(req)) ?? [] }
@@ -22,7 +25,7 @@ enum BackupService {
         let entries = fetch(eReq).map { e in
             [
                 "id": e.id?.uuidString ?? "",
-                "createdAt": e.createdAt?.timeIntervalSince1970 ?? 0,
+                "createdAt": e.createdAt.flatMap { iso.string(from: $0) } ?? "",
                 "kind": e.kind ?? "",
                 "content": e.content ?? "",
                 "tags": e.tags ?? [],
@@ -34,7 +37,7 @@ enum BackupService {
         dReq.predicate = NSPredicate(format: "profile == %@", profile)
         let plans = fetch(dReq).map { p in
             [
-                "day": p.day?.timeIntervalSince1970 ?? 0,
+                "day": p.day.flatMap { iso.string(from: $0) } ?? "",
                 "ref": p.scriptureRef ?? "",
                 "text": p.scriptureText ?? "",
                 "application": p.application ?? "",

@@ -19,6 +19,8 @@ struct SettingsView: View {
     @State private var exportURL: URL?
     @State private var showFileShare = false
     @State private var presentPaywall = false
+    @State private var exportStatus: String? = nil
+    @State private var exportError: String? = nil
     
     var body: some View {
         NavigationView {
@@ -159,24 +161,23 @@ struct SettingsView: View {
                                     do {
                                         exportURL = try BackupService.exportAll(context: viewContext, profile: p)
                                         showFileShare = true
+                                        exportStatus = "Exported to file successfully."
+                                        exportError = nil
                                         UINotificationFeedbackGenerator().notificationOccurred(.success)
                                     } catch {
+                                        exportError = error.localizedDescription
+                                        exportStatus = nil
                                         Log.error("Export error \(error.localizedDescription)")
                                     }
                                 }
-                                .sheet(isPresented: $showFileShare) {
-                                    if let url = exportURL { ShareLink(item: url) }
-                                }
+                                .sheet(isPresented: $showFileShare) { if let url = exportURL { ShareLink(item: url) } }
                                 
                                 PillButton(title: "Export My Data (Inline JSON)", style: .secondary, systemImage: "square.and.arrow.up") {
                                     exportUserData()
                                 }
                                 
-                                if let profile = profile, profile.streakCount > 0 {
-                                    PillButton(title: "Share My Streak", style: .primary, systemImage: "heart.fill") {
-                                        shareStreak(profile: profile)
-                                    }
-                                }
+                                if let status = exportStatus { Text(status).font(AppFont.caption()).foregroundColor(.secondary) }
+                                if let err = exportError { ErrorCard(text: "Export failed: \(err)") }
                             }
                         }
                         .card()

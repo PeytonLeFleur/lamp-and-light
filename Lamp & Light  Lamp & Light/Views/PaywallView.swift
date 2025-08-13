@@ -23,6 +23,7 @@ struct PaywallView: View {
                         PillButton(title: buttonTitle(for: p), style: .primary, systemImage: "crown.fill") {
                             Task { await pm.buy(p) }
                         }
+                        .accessibilityIdentifier("Start Premium")
                     }
                 }
 

@@ -37,13 +37,16 @@ struct OpenAIClient {
         cfg.timeoutIntervalForRequest = 10
         let session = URLSession(configuration: cfg)
 
-        let (data, _) = try await session.data(for: req)
+        let (data, resp) = try await session.data(for: req)
+        if let http = resp as? HTTPURLResponse, (200..<300).contains(http.statusCode) == false {
+            throw NSError(domain: "OpenAI", code: http.statusCode, userInfo: [NSLocalizedDescriptionKey: "HTTP \(http.statusCode)"])
+        }
         struct Resp: Codable {
             struct Choice: Codable { struct Msg: Codable { let content: String }; let message: Msg }
             let choices: [Choice]
         }
-        let resp = try JSONDecoder().decode(Resp.self, from: data)
-        let content = resp.choices.first?.message.content ?? "{}"
+        let decoded = try JSONDecoder().decode(Resp.self, from: data)
+        let content = decoded.choices.first?.message.content ?? "{}"
         guard let jsonData = AIJSONExtractor.extractJSONObject(from: content) else {
             throw NSError(domain: "OpenAI", code: 1, userInfo: [NSLocalizedDescriptionKey: "No JSON in response"])
         }

@@ -9,13 +9,16 @@ final class PurchaseManager: ObservableObject {
     @Published var statusText: String = "Checking…"
 
     private let productIDs = ["lamp.premium.monthly", "lamp.premium.yearly"]
+    private var updatesTask: Task<Void, Never>?
 
     func load() async {
         do {
             products = try await Product.products(for: productIDs).sorted { $0.price < $1.price }
             await refreshEntitlements()
-            for await _ in Transaction.updates {
-                await refreshEntitlements()
+            updatesTask = Task {
+                for await _ in Transaction.updates {
+                    await refreshEntitlements()
+                }
             }
         } catch {
             statusText = "Store unavailable"

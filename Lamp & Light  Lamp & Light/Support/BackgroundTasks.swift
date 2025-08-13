@@ -12,7 +12,10 @@ enum BackgroundTasksManager {
 
     static func scheduleDaily() {
         let req = BGAppRefreshTaskRequest(identifier: refreshID)
-        let next = Calendar.current.date(bySettingHour: 6, minute: 0, second: 0, of: Date()) ?? Date()
+        let cal = Calendar.current
+        let now = Date()
+        var next = cal.date(bySettingHour: 6, minute: 0, second: 0, of: now) ?? now
+        if next <= now { next = cal.date(byAdding: .day, value: 1, to: next)! }
         req.earliestBeginDate = next
         do { try BGTaskScheduler.shared.submit(req) } catch {
             Log.error("BG submit failed \(error.localizedDescription)")
@@ -57,11 +60,16 @@ enum PlanRefresher {
     static func refreshPlanForToday(context: NSManagedObjectContext) async -> Bool {
         guard let profile = getProfile(context: context) else { return false }
         if existingPlan(context: context, profile: profile) != nil { return true }
+        let plan = await PlanService.generateOrFetchToday(context: context, profile: profile)
         do {
-            let plan = await PlanService.generateOrFetchToday(context: context, profile: profile)
-            Log.info("Background generated plan for \(plan.scriptureRef ?? "unknown")")
+            try await context.perform {
+                if context.hasChanges { try? context.save() }
+            }
             Analytics.track("plan_generated", ["ref": plan.scriptureRef ?? "unknown"]) 
             return true
+        } catch {
+            Log.error("Background plan error \(error.localizedDescription)")
+            return false
         }
     }
 } 

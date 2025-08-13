@@ -28,7 +28,7 @@ struct LegalView: View {
                 }
             }
         }
-        .navigationTitle("About & Legal")
+        .navigationTitle("Legal")
     }
 
     private func loadMarkdown(_ kind: Kind) -> String {

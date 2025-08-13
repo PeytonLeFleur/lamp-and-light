@@ -4,19 +4,8 @@ import CoreData
 
 extension XCTestCase {
     func inMemoryContainer() -> NSPersistentContainer {
-        // Try to load the model from the app bundle using known names
-        let possibleNames = ["Lamp___Light__Lamp___Light", "LampAndLight"]
-        var model: NSManagedObjectModel? = nil
-        for name in possibleNames {
-            if let url = Bundle.main.url(forResource: name, withExtension: "momd"), let m = NSManagedObjectModel(contentsOf: url) {
-                model = m
-                break
-            }
-        }
-        if model == nil {
-            model = NSManagedObjectModel.mergedModel(from: [Bundle.main])
-        }
-        let container = NSPersistentContainer(name: "Lamp___Light__Lamp___Light", managedObjectModel: model!)
+        let mom = NSManagedObjectModel.mergedModel(from: [Bundle.main, Bundle(for: type(of: self))])!
+        let container = NSPersistentContainer(name: "Model", managedObjectModel: mom)
         let desc = NSPersistentStoreDescription()
         desc.type = NSInMemoryStoreType
         container.persistentStoreDescriptions = [desc]
