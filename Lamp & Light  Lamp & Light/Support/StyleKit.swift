@@ -61,4 +61,7 @@ enum Layout {
 	static let tileMin: CGFloat = 116   // fits three across on small phones
 	static let tileMax: CGFloat = 180
 	static let tileMinHeight: CGFloat = 112
+
+	// Height of bottom inset content
+	static let bottomInsetHeight: CGFloat = 44
 } 

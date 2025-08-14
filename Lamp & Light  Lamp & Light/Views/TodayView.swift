@@ -44,16 +44,17 @@ struct TodayView: View {
                             .lineSpacing(4)
                             .frame(maxWidth: .infinity, alignment: .leading)
                     }
-                    .frame(maxHeight: 200)
+                    .frame(maxHeight: 220)
 
                     Text("Text: KJV").font(AppFontV3.caption()).foregroundStyle(.secondary)
                 }
                 .card()
 
-                // Three tiles, adaptive across sizes
+                // Adaptive tiles
+                let gridSpacing = typeSize.isAccessibilitySize ? S.l : S.m
                 LazyVGrid(
-                    columns: [GridItem(.adaptive(minimum: Layout.tileMin, maximum: Layout.tileMax), spacing: (typeSize.isAccessibilitySize ? S.l : S.m), alignment: .top)],
-                    spacing: (typeSize.isAccessibilitySize ? S.l : S.m)
+                    columns: [GridItem(.adaptive(minimum: Layout.tileMin, maximum: Layout.tileMax), spacing: gridSpacing, alignment: .top)],
+                    spacing: gridSpacing
                 ) {
                     FeatureTile(title: "Application", subtitle: short(plan.application), symbol: "target", tint: .green)
                     FeatureTile(title: "Prayer", subtitle: short(plan.prayer), symbol: "hands.sparkles.fill", tint: .blue)
@@ -65,7 +66,9 @@ struct TodayView: View {
                     withAnimation(.spring(response: 0.4, dampingFraction: 0.8)) { markChallengeComplete(plan, profile: profile) }
                 }
                 .padding(.top, S.m)
-                .padding(.bottom, S.xl)
+
+                // Reserve space for the footer inset
+                Color.clear.frame(height: Layout.bottomInsetHeight + S.l)
             } else if isLoadingPlan {
                 LoadingCard(text: "Generating today's plan…")
             } else {
@@ -82,10 +85,11 @@ struct TodayView: View {
                     .font(AppFontV3.caption())
                     .monospacedDigit()
                     .foregroundStyle(.secondary)
+                    .accessibilityAddTraits(.isStaticText)
                 Spacer(minLength: 0)
             }
             .padding(.horizontal, S.xl)
-            .padding(.vertical, 8)
+            .padding(.vertical, 10)
             .background(.ultraThinMaterial)
             .overlay(Divider(), alignment: .top)
         }
