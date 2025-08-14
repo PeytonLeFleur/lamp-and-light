@@ -6,43 +6,37 @@ struct PaywallView: View {
     @StateObject private var pm = PurchaseManager.shared
 
     var body: some View {
-        AppBackground {
-            VStack(spacing: 14) {
-                Text("Lamp & Light Premium").font(AppFont.title())
-                VStack(alignment: .leading, spacing: 8) {
-                    Badge(text: "What you get")
-                    Label("AI-personalized application, prayer, challenge", systemImage: "wand.and.stars")
-                    Label("Weekly recaps and share cards", systemImage: "doc.text.image")
-                    Label("Streak rewards and goal tracking", systemImage: "flame.fill")
-                    Label("Future features included", systemImage: "sparkles")
-                    Label("A calm, guided start to your day", systemImage: "sun.max.fill")
-                }.card()
+        AppScaffold(title: "Lamp & Light Premium") {
+            VStack(alignment: .leading, spacing: 8) {
+                Badge(text: "What you get")
+                IconRow(icon: "wand.and.stars", title: "AI-personalized application, prayer, challenge")
+                IconRow(icon: "doc.text.image", title: "Weekly recaps and share cards")
+                IconRow(icon: "flame.fill", title: "Streak rewards and goal tracking")
+                IconRow(icon: "sparkles", title: "Future features included")
+                IconRow(icon: "sun.max.fill", title: "A calm, guided start to your day")
+            }
+            .card()
 
-                if pm.products.isEmpty {
-                    Text("Loading plans…").font(AppFont.body())
-                } else {
-                    ForEach(pm.products, id: \.id) { p in
-                        PillButton(title: buttonTitle(for: p), style: .primary, systemImage: "crown.fill") {
-                            Task { await pm.buy(p) }
-                        }
-                        .accessibilityIdentifier("Start Premium")
+            if pm.products.isEmpty {
+                Text("Loading plans…").font(AppFontV3.body())
+            } else {
+                ForEach(pm.products, id: \.id) { p in
+                    PillButton(title: buttonTitle(for: p), style: .large, systemImage: "crown.fill") {
+                        Task { await pm.buy(p) }
                     }
+                    .accessibilityIdentifier("Start Premium")
                 }
+            }
 
-                PillButton(title: "Restore Purchases", style: .secondary, systemImage: "arrow.clockwise.circle") {
-                    Task { await pm.restore() }
-                }
-                PillButton(title: "Manage Subscription", style: .secondary, systemImage: "gear") {
-                    openManageSubscriptions()
-                }
+            HStack(spacing: 12) {
+                PillButton(title: "Restore Purchases", style: .secondary, systemImage: "arrow.clockwise.circle") { Task { await pm.restore() } }
+                PillButton(title: "Manage Subscription", style: .secondary, systemImage: "gear") { openManageSubscriptions() }
+            }
 
-                VStack(spacing: 6) {
-                    NavigationLink("Terms of Use") { LegalView() }
-                    NavigationLink("Privacy Policy") { LegalView() }
-                    Text(pm.statusText).font(AppFont.caption()).foregroundColor(.secondary)
-                }.padding(.top, 4)
-
-                Spacer(minLength: 6)
+            VStack(spacing: 6) {
+                NavigationLink("Terms of Use") { LegalView() }
+                NavigationLink("Privacy Policy") { LegalView() }
+                Text(pm.statusText).font(AppFontV3.caption()).foregroundStyle(.secondary)
             }
         }
         .task { await pm.load() }

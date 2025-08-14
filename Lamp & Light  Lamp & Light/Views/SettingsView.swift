@@ -23,242 +23,112 @@ struct SettingsView: View {
     @State private var exportError: String? = nil
     
     var body: some View {
-        NavigationView {
-            AppBackground {
-                ScrollView {
-                    VStack(spacing: 20) {
-                        // Subscription card
-                        VStack(alignment: .leading, spacing: 10) {
-                            Badge(text: "Subscription")
-                            Text(PurchaseManager.shared.isPremium ? "Premium active" : "Free").font(AppFont.body())
-                            HStack(spacing: 12) {
-                                PillButton(title: "Manage", style: .secondary, systemImage: "crown.fill") { presentPaywall = true }
-                                PillButton(title: "Restore", style: .secondary, systemImage: "arrow.clockwise") { Task { await PurchaseManager.shared.restore() } }
-                            }
-                        }.card()
-                        
-                        // Privacy
-                        VStack(alignment: .leading, spacing: 10) {
-                            Badge(text: "Privacy")
-                            Toggle("Allow anonymous analytics", isOn: Binding(
-                                get: { PrivacySettings.analyticsEnabled },
-                                set: { PrivacySettings.analyticsEnabled = $0 }
-                            ))
-                            .tint(AppColor.primaryGreen)
-                            Text("Helps improve the app. No personal text is sent.").font(AppFont.caption()).foregroundColor(.secondary)
-                        }.card()
-                        
-                        // About & Legal
-                        VStack(alignment: .leading, spacing: 10) {
-                            Badge(text: "About & Legal")
-                            NavigationLink("About Lamp & Light") { AboutView() }
-                            NavigationLink("Terms, Privacy, Disclaimer") { LegalView() }
-                            if #available(iOS 17.0, *) {
-                                NavigationLink("Screenshot Booth") { ScreenshotBoothView() }
-                            }
-                            PillButton(title: "Share Lamp & Light", style: .secondary, systemImage: "square.and.arrow.up") {
-                                let text = "One passage, one prayer, one small challenge. Try Lamp & Light."
-                                let items: [Any] = [text]
-                                let av = UIActivityViewController(activityItems: items, applicationActivities: nil)
-                                UIApplication.shared.connectedScenes
-                                    .compactMap { ($0 as? UIWindowScene)?.keyWindow?.rootViewController }
-                                    .first?
-                                    .present(av, animated: true)
-                            }
-                        }.card()
-                        
-                        // Profile Information Section
-                        VStack(alignment: .leading, spacing: 16) {
-                            Badge(text: "Profile Information", color: AppColor.primaryGreen)
-                            
-                            VStack(spacing: 16) {
-                                VStack(alignment: .leading, spacing: 8) {
-                                    Text("Display Name")
-                                        .font(AppFont.headline())
-                                        .foregroundColor(AppColor.ink)
-                                    TextField("Display Name", text: $displayName)
-                                        .textFieldStyle(RoundedBorderTextFieldStyle())
-                                        .overlay(
-                                            RoundedRectangle(cornerRadius: 8)
-                                                .stroke(AppColor.softGreen.opacity(0.3), lineWidth: 1)
-                                        )
-                                }
-                                
-                                VStack(alignment: .leading, spacing: 8) {
-                                    Text("Denomination")
-                                        .font(AppFont.headline())
-                                        .foregroundColor(AppColor.ink)
-                                    TextField("Denomination", text: $denomination)
-                                        .textFieldStyle(RoundedBorderTextFieldStyle())
-                                        .overlay(
-                                            RoundedRectangle(cornerRadius: 8)
-                                                .stroke(AppColor.softGreen.opacity(0.3), lineWidth: 1)
-                                        )
-                                }
-                                
-                                VStack(alignment: .leading, spacing: 8) {
-                                    Text("Spiritual Goals")
-                                        .font(AppFont.headline())
-                                        .foregroundColor(AppColor.ink)
-                                    TextField("Spiritual Goals", text: $goals)
-                                        .textFieldStyle(RoundedBorderTextFieldStyle())
-                                        .lineLimit(3)
-                                        .overlay(
-                                            RoundedRectangle(cornerRadius: 8)
-                                                .stroke(AppColor.softGreen.opacity(0.3), lineWidth: 1)
-                                        )
-                                }
-                            }
-                        }
-                        .card()
-                        
-                        // Weekly Goals Section
-                        VStack(alignment: .leading, spacing: 16) {
-                            Badge(text: "Weekly Goals", color: AppColor.deepGreen)
-                            
-                            if let profile = profile {
-                                VStack(spacing: 12) {
-                                    HStack {
-                                        Text("Weekly Challenge Goal")
-                                            .font(AppFont.body())
-                                            .foregroundColor(AppColor.ink)
-                                        Spacer()
-                                        Text("\(profile.weeklyGoal)")
-                                            .font(AppFont.headline())
-                                            .foregroundColor(AppColor.primaryGreen)
-                                    }
-                                    
-                                    Stepper(
-                                        value: Binding(
-                                            get: { Int(profile.weeklyGoal) },
-                                            set: { 
-                                                profile.weeklyGoal = Int16($0)
-                                                try? viewContext.save()
-                                                UINotificationFeedbackGenerator().notificationOccurred(.success)
-                                            }
-                                        ),
-                                        in: 1...14
-                                    ) {
-                                        Text("Adjust weekly goal")
-                                            .font(AppFont.caption())
-                                            .foregroundColor(AppColor.slate)
-                                    }
-                                }
-                            }
-                        }
-                        .card()
-                        
-                        // Daily Reminder Section
-                        VStack(alignment: .leading, spacing: 10) {
-                            Badge(text: "Daily Reminder", color: AppColor.sky)
-                            Stepper(value: $notifHour, in: 0...23) { Text("Hour: \(notifHour)") }
-                            Stepper(value: $notifMinute, in: 0...55, step: 5) { Text("Minute: \(notifMinute)") }
-                            PillButton(title: "Save Reminder Time", style: .secondary, systemImage: "bell.badge.fill") {
-                                Notifications.scheduleDaily(hour: notifHour, minute: notifMinute)
-                                UINotificationFeedbackGenerator().notificationOccurred(.success)
-                            }
-                        }
-                        .card()
-                        
-                        // Data Management Section
-                        VStack(alignment: .leading, spacing: 16) {
-                            Badge(text: "Data Management", color: AppColor.sky)
-                            
-                            VStack(spacing: 12) {
-                                PillButton(title: "Export My Data (File)", style: .secondary, systemImage: "square.and.arrow.up.on.square") {
-                                    guard let p = profile else { return }
-                                    do {
-                                        exportURL = try BackupService.exportAll(context: viewContext, profile: p)
-                                        showFileShare = true
-                                        exportStatus = "Exported to file successfully."
-                                        exportError = nil
-                                        UINotificationFeedbackGenerator().notificationOccurred(.success)
-                                    } catch {
-                                        exportError = error.localizedDescription
-                                        exportStatus = nil
-                                        Log.error("Export error \(error.localizedDescription)")
-                                    }
-                                }
-                                .sheet(isPresented: $showFileShare) { if let url = exportURL { ShareLink(item: url) } }
-                                
-                                PillButton(title: "Export My Data (Inline JSON)", style: .secondary, systemImage: "square.and.arrow.up") {
-                                    exportUserData()
-                                }
-                                
-                                if let status = exportStatus { Text(status).font(AppFont.caption()).foregroundColor(.secondary) }
-                                if let err = exportError { ErrorCard(text: "Export failed: \(err)") }
-                            }
-                        }
-                        .card()
-                        
-                        // About / Paywall
-                        VStack(alignment: .leading, spacing: 16) {
-                            Badge(text: "About", color: AppColor.sunshine.opacity(0.5))
-                            
-                            VStack(spacing: 12) {
-                                NavigationLink(destination: PaywallView()) {
-                                    HStack {
-                                        Image(systemName: "lock.circle")
-                                        Text("Upgrade (Placeholder)")
-                                        Spacer()
-                                        Image(systemName: "chevron.right")
-                                    }
-                                    .font(AppFont.body())
-                                    .foregroundColor(AppColor.ink)
-                                }
-                            }
-                        }
-                        .card()
-                        
-                        Spacer(minLength: 20)
-                    }
-                    .padding(.vertical, 8)
+        AppScaffold(title: "Settings") {
+            // Subscription
+            VStack(alignment: .leading, spacing: 10) {
+                Badge(text: "Subscription")
+                Text(PurchaseManager.shared.isPremium ? "Premium active" : "Free").font(AppFontV3.body())
+                HStack(spacing: 12) {
+                    PillButton(title: "Manage", style: .secondary, systemImage: "crown.fill") { presentPaywall = true }
+                    PillButton(title: "Restore", style: .secondary, systemImage: "arrow.clockwise") { Task { await PurchaseManager.shared.restore() } }
                 }
-            }
-            .navigationTitle("Settings")
-            .onAppear { loadProfile() }
-            .onChange(of: displayName) { _, _ in saveProfile() }
-            .onChange(of: denomination) { _, _ in saveProfile() }
-            .onChange(of: goals) { _, _ in saveProfile() }
-            .sheet(isPresented: $showingExportSheet) { if let data = exportData { ShareSheet(activityItems: [data]) } }
-            .sheet(isPresented: $showingShareSheet) { if let image = shareImage { ShareSheet(activityItems: [image]) } }
-            .sheet(isPresented: $presentPaywall) { PaywallView() }
+            }.card()
+            
+            // Privacy
+            VStack(alignment: .leading, spacing: 10) {
+                Badge(text: "Privacy")
+                Toggle("Allow anonymous analytics", isOn: Binding(
+                    get: { PrivacySettings.analyticsEnabled },
+                    set: { PrivacySettings.analyticsEnabled = $0 }
+                ))
+                .tint(S.mint)
+                Text("Helps improve the app. No personal text is sent.").font(AppFontV3.caption()).foregroundStyle(.secondary)
+            }.card()
+            
+            // About & Legal
+            VStack(alignment: .leading, spacing: 10) {
+                Badge(text: "About & Legal")
+                NavigationLink { AboutView() } label: { IconRow(icon: "info.circle", title: "About Lamp & Light") }
+                NavigationLink { LegalView() } label: { IconRow(icon: "doc.text", title: "Terms, Privacy, Disclaimer") }
+                if #available(iOS 17.0, *) { NavigationLink { ScreenshotBoothView() } label: { IconRow(icon: "camera", title: "Screenshot Booth") } }
+                PillButton(title: "Share Lamp & Light", style: .secondary, systemImage: "square.and.arrow.up") {
+                    let text = "One passage, one prayer, one small challenge. Try Lamp & Light."
+                    let items: [Any] = [text]
+                    let av = UIActivityViewController(activityItems: items, applicationActivities: nil)
+                    UIApplication.shared.connectedScenes.compactMap { ($0 as? UIWindowScene)?.keyWindow?.rootViewController }.first?.present(av, animated: true)
+                }
+            }.card()
+            
+            // Profile
+            VStack(alignment: .leading, spacing: 16) {
+                Badge(text: "Profile Information")
+                TextField("Display Name", text: $displayName).textFieldStyle(RoundedBorderTextFieldStyle())
+                TextField("Denomination", text: $denomination).textFieldStyle(RoundedBorderTextFieldStyle())
+                TextField("Spiritual Goals", text: $goals).textFieldStyle(RoundedBorderTextFieldStyle())
+            }.card()
+            
+            // Weekly Goal
+            VStack(alignment: .leading, spacing: 12) {
+                Badge(text: "Weekly Goals")
+                if let profile = profile {
+                    VStack(spacing: 12) {
+                        HStack {
+                            Text("Weekly Challenge Goal").font(AppFontV3.body()); Spacer(); Text("\(profile.weeklyGoal)").font(AppFontV3.h2())
+                        }
+                        Stepper(value: Binding(get: { Int(profile.weeklyGoal) }, set: { profile.weeklyGoal = Int16($0); try? viewContext.save(); UINotificationFeedbackGenerator().notificationOccurred(.success) }), in: 1...14) { Text("Adjust weekly goal").font(AppFontV3.caption()).foregroundStyle(.secondary) }
+                    }
+                }
+            }.card()
+            
+            // Daily Reminder
+            VStack(alignment: .leading, spacing: 10) {
+                Badge(text: "Daily Reminder")
+                Stepper(value: $notifHour, in: 0...23) { Text("Hour: \(notifHour)") }
+                Stepper(value: $notifMinute, in: 0...55, step: 5) { Text("Minute: \(notifMinute)") }
+                PillButton(title: "Save Reminder Time", style: .secondary, systemImage: "bell.badge.fill") {
+                    Notifications.scheduleDaily(hour: notifHour, minute: notifMinute)
+                    UINotificationFeedbackGenerator().notificationOccurred(.success)
+                }
+            }.card()
+            
+            // Data
+            VStack(alignment: .leading, spacing: 16) {
+                Badge(text: "Data Management")
+                PillButton(title: "Export My Data (File)", style: .secondary, systemImage: "square.and.arrow.up.on.square") {
+                    guard let p = profile else { return }
+                    do {
+                        exportURL = try BackupService.exportAll(context: viewContext, profile: p)
+                        showFileShare = true; exportStatus = "Exported to file successfully."; exportError = nil
+                        UINotificationFeedbackGenerator().notificationOccurred(.success)
+                    } catch { exportError = error.localizedDescription; exportStatus = nil; Log.error("Export error \(error.localizedDescription)") }
+                }
+                .sheet(isPresented: $showFileShare) { if let url = exportURL { ShareLink(item: url) } }
+                PillButton(title: "Export My Data (Inline JSON)", style: .secondary, systemImage: "square.and.arrow.up") { exportUserData() }
+                if let status = exportStatus { Text(status).font(AppFontV3.caption()).foregroundStyle(.secondary) }
+                if let err = exportError { ErrorCard(text: "Export failed: \(err)") }
+            }.card()
         }
+        .sheet(isPresented: $presentPaywall) { PaywallView() }
+        .onAppear { loadProfile() }
+        .onChange(of: displayName) { _, _ in saveProfile() }
+        .onChange(of: denomination) { _, _ in saveProfile() }
+        .onChange(of: goals) { _, _ in saveProfile() }
     }
     
     private func loadProfile() {
-        let fetchRequest: NSFetchRequest<Profile> = Profile.fetchRequest()
-        fetchRequest.fetchLimit = 1
-        
-        do {
-            let profiles = try viewContext.fetch(fetchRequest)
-            if let firstProfile = profiles.first {
-                profile = firstProfile
-                displayName = firstProfile.displayName ?? ""
-                denomination = firstProfile.denomination ?? ""
-                goals = firstProfile.goals ?? ""
-            }
-        } catch {
-            print("Error loading profile: \(error)")
-        }
+        let fetchRequest: NSFetchRequest<Profile> = Profile.fetchRequest(); fetchRequest.fetchLimit = 1
+        do { let profiles = try viewContext.fetch(fetchRequest); if let firstProfile = profiles.first { profile = firstProfile; displayName = firstProfile.displayName ?? ""; denomination = firstProfile.denomination ?? ""; goals = firstProfile.goals ?? "" } } catch { print("Error loading profile: \(error)") }
     }
     
     private func saveProfile() {
         guard let profile = profile else { return }
-        
         profile.displayName = displayName.isEmpty ? nil : displayName
         profile.denomination = denomination.isEmpty ? nil : denomination
         profile.goals = goals.isEmpty ? nil : goals
-        
-        do {
-            try viewContext.save()
-            UINotificationFeedbackGenerator().notificationOccurred(.success)
-        } catch {
-            print("Error saving profile: \(error)")
-            UINotificationFeedbackGenerator().notificationOccurred(.error)
-        }
+        do { try viewContext.save(); UINotificationFeedbackGenerator().notificationOccurred(.success) } catch { UINotificationFeedbackGenerator().notificationOccurred(.error) }
     }
     
+    // exportUserData and shareStreak remain as before
     private func shareStreak(profile: Profile) {
         // Get the last completed plan's scripture reference
         let fetchRequest: NSFetchRequest<DailyPlan> = DailyPlan.fetchRequest()
@@ -356,17 +226,11 @@ struct SettingsView: View {
 }
 
 struct ShareSheet: UIViewControllerRepresentable {
-    let activityItems: [Any]
-    
-    func makeUIViewController(context: Context) -> UIActivityViewController {
-        let controller = UIActivityViewController(activityItems: activityItems, applicationActivities: nil)
-        return controller
-    }
-    
-    func updateUIViewController(_ uiViewController: UIActivityViewController, context: Context) {}
+	let activityItems: [Any]
+	func makeUIViewController(context: Context) -> UIActivityViewController {
+		UIActivityViewController(activityItems: activityItems, applicationActivities: nil)
+	}
+	func updateUIViewController(_ uiViewController: UIActivityViewController, context: Context) { }
 }
 
-#Preview {
-    SettingsView()
-        .environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
-} 
+#Preview { SettingsView().environment(\.managedObjectContext, PersistenceController.preview.container.viewContext) } 

@@ -17,159 +17,68 @@ struct TodayView: View {
     @State private var didCelebrate = false
     
     var body: some View {
-        NavigationView {
-            AppBackground {
-                VStack(spacing: 14) {
-                    if !net.isOnline {
-                        Text("You are offline. Using saved plan and placeholders.")
-                            .font(AppFont.caption())
-                            .foregroundColor(.secondary)
-                            .card()
+        AppScaffold(title: "Lamp & Light", showGreetingIcon: true) {
+            if !net.isOnline {
+                Text("You are offline. Using saved plan and placeholders.")
+                    .font(AppFontV3.caption())
+                    .foregroundStyle(.secondary)
+                    .card()
+            }
+
+            TopGreeting(name: (profile?.displayName?.split(separator: " ").first.map(String.init)) ?? "Friend")
+
+            if let plan = dailyPlan, let profile = profile {
+                // Scripture Card
+                VStack(alignment: .leading, spacing: S.m) {
+                    HStack {
+                        Text("Today’s passage").font(AppFontV3.h2())
+                        Spacer()
+                        Badge(text: "\(max(1, Int(profile.streakCount)))-day ⭐️", color: S.mint)
                     }
-                    if let plan = dailyPlan, let profile = profile {
-                        StreakHeader(name: profile.displayName ?? "Friend", days: Int(profile.streakCount))
-                        
-                        // Scripture Card
-                        VStack(alignment: .leading, spacing: 10) {
-                            HStack {
-                                Badge(text: "Scripture")
-                                Spacer()
-                                Button {
-                                    UIPasteboard.general.string = plan.scriptureRef
-                                    UINotificationFeedbackGenerator().notificationOccurred(.success)
-                                } label: { Image(systemName: "doc.on.doc").foregroundColor(AppColor.primaryGreen) }
-                                .accessibilityLabel(Text("Copy reference"))
-                                .accessibilityHint(Text("Copies the passage reference"))
-                                Button { presentWhy(plan: plan, profile: profile) } label: { Image(systemName: "info.circle").foregroundColor(AppColor.slate) }
-                                .accessibilityLabel(Text("Why this passage"))
-                                .accessibilityHint(Text("Shows reasons based on your recent entries"))
-                            }
-                            HStack(alignment: .firstTextBaseline, spacing: 8) {
-                                Text(plan.scriptureRef ?? "")
-                                    .font(.title) // allow Dynamic Type scaling
-                                    .foregroundColor(AppColor.ink)
-                                    .minimumScaleFactor(0.9)
-                                    .lineLimit(2)
-                            }
-                            
-                            DisclosureGroup("Read passage") {
-                                VStack(alignment: .leading, spacing: 6) {
-                                    Text(plan.scriptureText ?? "")
-                                        .font(.body)
-                                        .foregroundColor(AppColor.slate)
-                                        .minimumScaleFactor(0.9)
-                                        .lineLimit(nil)
-                                    Text("Text KJV Public Domain")
-                                        .font(AppFont.caption())
-                                        .foregroundColor(.secondary)
-                                }
-                                .padding(.top, 8)
-                                
-                                if let crossrefs = plan.crossrefs, !crossrefs.isEmpty {
-                                    Text("Cross-references: \(crossrefs.joined(separator: ", "))")
-                                        .font(AppFont.caption())
-                                        .foregroundColor(AppColor.slate.opacity(0.7))
-                                        .padding(.top, 4)
-                                }
-                            }
-                        }
-                        .card()
-                        
-                        // Application Card
-                        VStack(alignment: .leading, spacing: 10) {
-                            Badge(text: "Application", color: AppColor.sky.opacity(0.5))
-                            Text(plan.application ?? "")
-                                .font(.body)
-                                .foregroundColor(AppColor.ink)
-                                .minimumScaleFactor(0.9)
-                                .lineLimit(nil)
-                            
-                            PillButton(title: "Refresh Application", style: .secondary, systemImage: "arrow.triangle.2.circlepath") {
-                                FeatureGate.requirePremium(isPremium: PurchaseManager.shared.isPremium, action: {
-                                    regenerateBits(keeping: plan)
-                                }, showPaywall: {
-                                    presentPaywall = true
-                                })
-                            }
-                        }
-                        .card()
-                        
-                        // Prayer Card
-                        VStack(alignment: .leading, spacing: 10) {
-                            Badge(text: "Prayer", color: AppColor.sunshine.opacity(0.5))
-                            Text(plan.prayer ?? "")
-                                .font(.body)
-                                .foregroundColor(AppColor.ink)
-                                .minimumScaleFactor(0.9)
-                                .lineLimit(nil)
-                                .italic()
-                            HStack {
-                                PillButton(title: "Copy Prayer", style: .secondary, systemImage: "doc.on.doc") { copyPrayer() }
-                                .accessibilityLabel(Text("Copy prayer"))
-                            }
-                        }
-                        .card()
-                        
-                        // Challenge Card
-                        VStack(alignment: .leading, spacing: 10) {
-                            Badge(text: "Challenge", color: AppColor.softGreen)
-                            Text(plan.challenge ?? "")
-                                .font(.body)
-                                .foregroundColor(AppColor.ink)
-                                .minimumScaleFactor(0.9)
-                                .lineLimit(nil)
-                            
-                            HStack(spacing: 12) {
-                                PillButton(title: "Mark Done", style: .primary, systemImage: "checkmark.seal.fill") {
-                                    withAnimation(.spring(response: 0.4, dampingFraction: 0.8)) {
-                                        markChallengeComplete(plan, profile: profile)
-                                    }
-                                }
-                                .accessibilityLabel(Text("Mark challenge done"))
-                                PillButton(title: "Skip", style: .danger, systemImage: "xmark") {
-                                    withAnimation(.spring(response: 0.4, dampingFraction: 0.8)) {
-                                        markChallengeSkipped(plan)
-                                    }
-                                }
-                                .accessibilityLabel(Text("Skip challenge"))
-                            }
-                        }
-                        .card()
-                        
-                        // Weekly Goal Card
-                        VStack(alignment: .leading, spacing: 12) {
-                            Badge(text: "Weekly Progress", color: AppColor.deepGreen)
-                            
-                            HStack {
-                                VStack(alignment: .leading, spacing: 8) {
-                                    let goal = max(1, Int(profile.weeklyGoal))
-                                    let done = Int(profile.weeklyCompleted)
-                                    Text("\(done) of \(goal) challenges this week")
-                                        .font(AppFont.body())
-                                        .foregroundColor(AppColor.slate)
-                                }
-                                Spacer()
-                                ProgressRing(progress: min(Double(profile.weeklyCompleted)/Double(max(1, profile.weeklyGoal)), 1.0))
-                            }
-                        }
-                        .card()
-                        
-                        Spacer(minLength: 6)
-                    } else if isLoadingPlan {
-                        LoadingCard(text: "Generating today's plan…")
-                            .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    } else {
-                        LoadingCard(text: "Loading today's plan…")
-                            .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    Text(plan.scriptureRef ?? "").font(AppFontV3.h2())
+                    Text(plan.scriptureText ?? "")
+                        .font(AppFontV3.body())
+                        .lineSpacing(4)
+                    Text("Text: KJV").font(AppFontV3.caption()).foregroundStyle(.secondary)
+                }
+                .card()
+
+                // Tiles
+                HStack(spacing: S.m) {
+                    FeatureTile(title: "Application", subtitle: short(plan.application), symbol: "target", tint: .green)
+                    FeatureTile(title: "Prayer", subtitle: short(plan.prayer), symbol: "hands.sparkles.fill", tint: .blue)
+                    FeatureTile(title: "Challenge", subtitle: short(plan.challenge), symbol: "flag.circle.fill", tint: .orange)
+                }
+
+                // Big Start button
+                PillButton(title: "Start", style: .large, systemImage: "checkmark.circle.fill") {
+                    withAnimation(.spring(response: 0.4, dampingFraction: 0.8)) {
+                        markChallengeComplete(plan, profile: profile)
                     }
                 }
+
+                // Week progress footer
+                let goal = max(1, Int(profile.weeklyGoal))
+                let done = Int(profile.weeklyCompleted)
+                Text("This week \(done)/\(goal) ⭐️")
+                    .font(AppFontV3.caption())
+                    .foregroundStyle(.secondary)
+            } else if isLoadingPlan {
+                LoadingCard(text: "Generating today's plan…")
+            } else {
+                LoadingCard(text: "Loading today's plan…")
             }
-            .overlay(ConfettiHosting(host: confetti).allowsHitTesting(false))
-            .navigationTitle("Today")
-            .task { await loadProfileAndPlan() }
-            .sheet(isPresented: $showWhySheet) { WhyThisPassageSheet(reference: dailyPlan?.scriptureRef ?? "", themes: whyThemes, reasons: whyReasons) }
-            .sheet(isPresented: $presentPaywall) { PaywallView() }
         }
+        .overlay(ConfettiHosting(host: confetti).allowsHitTesting(false))
+        .task { await loadProfileAndPlan() }
+        .sheet(isPresented: $showWhySheet) { WhyThisPassageSheet(reference: dailyPlan?.scriptureRef ?? "", themes: whyThemes, reasons: whyReasons) }
+        .sheet(isPresented: $presentPaywall) { PaywallView() }
+    }
+    
+    private func short(_ s: String?) -> String {
+        let txt = s ?? ""
+        if txt.count <= 24 { return txt }
+        return String(txt.prefix(24)) + "…"
     }
     
     private func presentWhy(plan: DailyPlan, profile: Profile) {

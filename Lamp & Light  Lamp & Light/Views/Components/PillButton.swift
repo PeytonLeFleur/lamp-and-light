@@ -1,43 +1,38 @@
 import SwiftUI
 
 struct PillButton: View {
-    enum Style { case primary, secondary, danger }
-    let title: String
-    var style: Style = .primary
-    var systemImage: String? = nil
-    var action: () -> Void
+	enum Style { case primary, secondary, danger, large }
+	var title: String
+	var style: Style = .primary
+	var systemImage: String? = nil
+	var action: () -> Void
 
-    var body: some View {
-        Button(action: action) {
-            HStack(spacing: 8) {
-                if let s = systemImage { Image(systemName: s).imageScale(.medium) }
-                Text(title).font(AppFont.headline())
-            }
-            .padding(.vertical, 14).padding(.horizontal, 18)
-            .frame(maxWidth: .infinity)
-            .foregroundColor(.white)
-            .background(background)
-            .clipShape(Capsule())
-            .shadow(color: background.opacity(0.35), radius: 10, x: 0, y: 6)
-        }
-        .buttonStyle(.plain)
-        .accessibilityElement()
-        .accessibilityLabel(Text(title))
-        .accessibilityHint(Text({
-            switch style {
-            case .primary: return "Primary action"
-            case .secondary: return "Secondary action"
-            case .danger: return "Danger action"
-            }
-        }()))
-        .contentShape(Rectangle())
-    }
+	var body: some View {
+		Button(action: action) {
+			HStack(spacing: S.s) {
+				if let systemImage { Image(systemName: systemImage) }
+				Text(title).font(style == .large ? AppFontV3.h1() : AppFontV3.h2())
+			}
+			.frame(maxWidth: .infinity)
+			.padding(.vertical, style == .large ? 18 : 14)
+		}
+		.buttonStyle(.plain)
+		.background(background)
+		.foregroundStyle(foreground)
+		.clipShape(Capsule())
+		.shadow(color: Color.black.opacity(style == .secondary ? 0.08 : 0.18), radius: 18, x: 0, y: 10)
+		.accessibilityLabel(Text(title))
+	}
 
-    private var background: Color {
-        switch style {
-        case .primary: return AppColor.primaryGreen
-        case .secondary: return AppColor.sky
-        case .danger: return AppColor.coral
-        }
-    }
+	@ViewBuilder private var background: some View {
+		switch style {
+		case .primary, .large:
+			LinearGradient(colors: [S.mint, Color(.systemTeal)], startPoint: .leading, endPoint: .trailing)
+		case .secondary:
+			Color(.systemGray6)
+		case .danger:
+			LinearGradient(colors: [Color(.systemRed), Color(.systemPink)], startPoint: .leading, endPoint: .trailing)
+		}
+	}
+	private var foreground: Color { style == .secondary ? .primary : .white }
 } 
