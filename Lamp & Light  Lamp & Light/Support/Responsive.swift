@@ -1,7 +1,7 @@
 import SwiftUI
 
-struct ResponsiveGrid: Layout {
-	func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
+struct ResponsiveGrid: SwiftUI.Layout {
+	func sizeThatFits(proposal: ProposedViewSize, subviews: SwiftUI.LayoutSubviews, cache: inout ()) -> CGSize {
 		let width = proposal.width ?? 0
 		let columns = Self.columns(for: width)
 		let tileW = width / CGFloat(columns) - Theme.Spacing.lg
@@ -23,7 +23,7 @@ struct ResponsiveGrid: Layout {
 		return .init(width: width, height: y)
 	}
 
-	func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) {
+	func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: SwiftUI.LayoutSubviews, cache: inout ()) {
 		let columns = Self.columns(for: bounds.width)
 		let tileW = bounds.width / CGFloat(columns) - Theme.Spacing.lg
 		var x = bounds.minX, y = bounds.minY, rowMaxH: CGFloat = 0
@@ -56,7 +56,6 @@ struct ResponsiveGrid: Layout {
 /// Fits children without scroll by collapsing, truncating, or scaling.
 /// Order matters. Put the most important blocks first.
 struct ViewThatFitsOneScreen<Content: View>: View {
-	@Environment(\.dynamicTypeSize) var dyn
 	let content: Content
 	init(@ViewBuilder content: () -> Content) { self.content = content() }
 
@@ -64,11 +63,10 @@ struct ViewThatFitsOneScreen<Content: View>: View {
 		GeometryReader { geo in
 			VStack(spacing: Theme.Spacing.lg) {
 				content
-					.environment(\.sizeCategory, dyn.sizeCategory)
 			}
 			.padding(Theme.Spacing.lg)
 			.frame(maxWidth: .infinity, maxHeight: .infinity)
-			.background(Theme.bg.ignoresSafeArea())
+			.background(Theme.background.ignoresSafeArea())
 			.modifier(FitToHeight(maxHeight: geo.size.height))
 		}
 	}

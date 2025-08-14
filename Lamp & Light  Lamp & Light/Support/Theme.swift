@@ -49,17 +49,18 @@ extension View {
     func card() -> some View { modifier(CardStyle()) }
 }
 
-// MARK: - Unified Theme (v1)
+// New unified Theme matching the no-scroll system
+import SwiftUI
 
 enum Theme {
-    // Colors
-    static let bg = Color("AppBackground")
-    static let card = Color("CardBackground")
-    static let accent = Color("AccentColor")
-    static let text = Color.primary
-    static let subtext = Color.secondary
+    // MARK: - Colors (define in Assets)
+    static let background = Color("AppBackground")
+    static let card       = Color("CardBackground")
+    static let accent     = Color("AccentColor")
+    static let text       = Color.primary
+    static let subtext    = Color.secondary
 
-    // Spacing
+    // MARK: - Spacing
     enum Spacing {
         static let xs: CGFloat = 4
         static let sm: CGFloat = 8
@@ -69,29 +70,50 @@ enum Theme {
         static let xxl: CGFloat = 32
     }
 
-    // Corner radius
+    // MARK: - Corner radius
     enum Radius {
         static let sm: CGFloat = 10
         static let md: CGFloat = 16
         static let lg: CGFloat = 24
     }
 
-    // Typography
+    // MARK: - Typography
     enum Typography {
-        static func title(_ size: ContentSizeCategory) -> Font {
+        static func appTitle(_ size: ContentSizeCategory) -> Font {
             size.isAccessibilityCategory ? .title3.weight(.semibold) : .title2.weight(.semibold)
         }
         static func heading(_ size: ContentSizeCategory) -> Font {
             size.isAccessibilityCategory ? .headline.weight(.semibold) : .title3.weight(.semibold)
         }
-        static let body = Font.body
+        static let body    = Font.body
         static let caption = Font.subheadline
     }
 
-    // Layout caps to keep one screen
+    // MARK: - Layout caps for one-screen rule
     enum Caps {
         static let maxCardHeight: CGFloat = 220
-        static let maxRowHeight: CGFloat = 88
-        static let minTileWidth: CGFloat = 120
+        static let maxRowHeight:  CGFloat = 88
+        static let minTileWidth:  CGFloat = 120
     }
+
+    // MARK: - Effects
+    enum Shadow {
+        static let card = ShadowStyle(radius: 10, y: 2, opacity: 0.06)
+    }
+}
+
+/// Small helper for consistent shadows
+struct ShadowStyle {
+    let radius: CGFloat
+    let x: CGFloat = 0
+    let y: CGFloat
+    let opacity: Double
+
+    func apply(to view: some View) -> some View {
+        view.shadow(color: .black.opacity(opacity), radius: radius, x: x, y: y)
+    }
+}
+
+extension View {
+    func cardShadow() -> some View { ShadowStyle(radius: 10, y: 2, opacity: 0.06).apply(to: self) }
 } 

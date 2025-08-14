@@ -23,5 +23,6 @@ struct SectionCard<Content: View>: View {
 		.frame(maxWidth: .infinity)
 		.background(Theme.card)
 		.clipShape(RoundedRectangle(cornerRadius: Theme.Radius.lg))
+		.cardShadow()
 	}
 } 
