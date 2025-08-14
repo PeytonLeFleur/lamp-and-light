@@ -12,7 +12,7 @@ struct SectionCard<Content: View>: View {
 	var body: some View {
 		VStack(alignment: .leading, spacing: Theme.Spacing.md) {
 			Text(title)
-				.font(Theme.Type.heading(size))
+				.font(Theme.Typography.heading(size))
 				.foregroundStyle(Theme.text)
 				.lineLimit(1)
 				.minimumScaleFactor(0.8)

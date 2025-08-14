@@ -77,7 +77,7 @@ enum Theme {
     }
 
     // Typography
-    enum Type {
+    enum Typography {
         static func title(_ size: ContentSizeCategory) -> Font {
             size.isAccessibilityCategory ? .title3.weight(.semibold) : .title2.weight(.semibold)
         }
