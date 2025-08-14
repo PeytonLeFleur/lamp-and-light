@@ -43,8 +43,9 @@ struct TodayView: View {
                             .font(AppFontV3.body())
                             .lineSpacing(4)
                             .frame(maxWidth: .infinity, alignment: .leading)
+                            .padding(.trailing, 2)
                     }
-                    .frame(maxHeight: 220)
+                    .frame(maxHeight: 240)
 
                     Text("Text: KJV").font(AppFontV3.caption()).foregroundStyle(.secondary)
                 }
@@ -56,13 +57,20 @@ struct TodayView: View {
                     columns: [GridItem(.adaptive(minimum: Layout.tileMin, maximum: Layout.tileMax), spacing: gridSpacing, alignment: .top)],
                     spacing: gridSpacing
                 ) {
-                    FeatureTile(title: "Application", subtitle: short(plan.application), symbol: "target", tint: .green)
-                    FeatureTile(title: "Prayer", subtitle: short(plan.prayer), symbol: "hands.sparkles.fill", tint: .blue)
-                    FeatureTile(title: "Challenge", subtitle: short(plan.challenge), symbol: "flag.circle.fill", tint: .orange)
+                    FeatureTile(title: "Application", subtitle: short(plan.application), symbol: "target", tint: .green) {
+                        // open application detail
+                    }
+                    FeatureTile(title: "Prayer", subtitle: short(plan.prayer), symbol: "hands.sparkles.fill", tint: .blue) {
+                        // open prayer detail
+                    }
+                    FeatureTile(title: "Challenge", subtitle: short(plan.challenge), symbol: "flag.circle.fill", tint: .orange) {
+                        // open challenge detail
+                    }
                 }
 
                 // Big Start button with breathing room
                 PillButton(title: "Start", style: .large, systemImage: "checkmark.circle.fill") {
+                    Haptics.success()
                     withAnimation(.spring(response: 0.4, dampingFraction: 0.8)) { markChallengeComplete(plan, profile: profile) }
                 }
                 .padding(.top, S.m)
@@ -92,6 +100,7 @@ struct TodayView: View {
             .padding(.vertical, 10)
             .background(.ultraThinMaterial)
             .overlay(Divider(), alignment: .top)
+            .allowsHitTesting(false)
         }
     }
 
