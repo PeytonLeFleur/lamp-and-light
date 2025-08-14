@@ -54,4 +54,11 @@ extension View {
 	}
 
 	// Backward compatible with any .card()
+}
+
+enum Layout {
+	// Adaptive tile sizing
+	static let tileMin: CGFloat = 116   // fits three across on small phones
+	static let tileMax: CGFloat = 180
+	static let tileMinHeight: CGFloat = 112
 } 

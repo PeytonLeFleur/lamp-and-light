@@ -3,6 +3,7 @@ import CoreData
 
 struct TodayView: View {
     @Environment(\.managedObjectContext) private var viewContext
+    @Environment(\.dynamicTypeSize) private var typeSize
     @StateObject private var planService = PlanService()
     @StateObject private var confetti = ConfettiHost()
     @StateObject private var net = NetworkMonitor.shared
@@ -15,7 +16,7 @@ struct TodayView: View {
     @State private var whyThemes: [String] = []
     @State private var presentPaywall = false
     @State private var didCelebrate = false
-    
+
     var body: some View {
         AppScaffold(title: "Lamp & Light", showGreetingIcon: true) {
             if !net.isOnline {
@@ -28,41 +29,43 @@ struct TodayView: View {
             TopGreeting(name: (profile?.displayName?.split(separator: " ").first.map(String.init)) ?? "Friend")
 
             if let plan = dailyPlan, let profile = profile {
-                // Scripture Card
+                // Scripture Card with capped height
                 VStack(alignment: .leading, spacing: S.m) {
                     HStack {
                         Text("Today’s passage").font(AppFontV3.h2())
                         Spacer()
-                        Badge(text: "\(max(1, Int(profile.streakCount)))-day ⭐️", color: S.mint)
+                        Badge(text: streakLabel(), color: S.mint)
                     }
-                    Text(plan.scriptureRef ?? "").font(AppFontV3.h2())
-                    Text(plan.scriptureText ?? "")
-                        .font(AppFontV3.body())
-                        .lineSpacing(4)
+                    Text(plan.scriptureRef ?? "Psalm 23:1–6").font(AppFontV3.h2())
+
+                    ScrollView {
+                        Text(plan.scriptureText ?? " ")
+                            .font(AppFontV3.body())
+                            .lineSpacing(4)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                    }
+                    .frame(maxHeight: 200)
+
                     Text("Text: KJV").font(AppFontV3.caption()).foregroundStyle(.secondary)
                 }
                 .card()
 
-                // Tiles
-                HStack(spacing: S.m) {
+                // Three tiles, adaptive across sizes
+                LazyVGrid(
+                    columns: [GridItem(.adaptive(minimum: Layout.tileMin, maximum: Layout.tileMax), spacing: (typeSize.isAccessibilitySize ? S.l : S.m), alignment: .top)],
+                    spacing: (typeSize.isAccessibilitySize ? S.l : S.m)
+                ) {
                     FeatureTile(title: "Application", subtitle: short(plan.application), symbol: "target", tint: .green)
                     FeatureTile(title: "Prayer", subtitle: short(plan.prayer), symbol: "hands.sparkles.fill", tint: .blue)
                     FeatureTile(title: "Challenge", subtitle: short(plan.challenge), symbol: "flag.circle.fill", tint: .orange)
                 }
 
-                // Big Start button
+                // Big Start button with breathing room
                 PillButton(title: "Start", style: .large, systemImage: "checkmark.circle.fill") {
-                    withAnimation(.spring(response: 0.4, dampingFraction: 0.8)) {
-                        markChallengeComplete(plan, profile: profile)
-                    }
+                    withAnimation(.spring(response: 0.4, dampingFraction: 0.8)) { markChallengeComplete(plan, profile: profile) }
                 }
-
-                // Week progress footer
-                let goal = max(1, Int(profile.weeklyGoal))
-                let done = Int(profile.weeklyCompleted)
-                Text("This week \(done)/\(goal) ⭐️")
-                    .font(AppFontV3.caption())
-                    .foregroundStyle(.secondary)
+                .padding(.top, S.m)
+                .padding(.bottom, S.xl)
             } else if isLoadingPlan {
                 LoadingCard(text: "Generating today's plan…")
             } else {
@@ -73,29 +76,43 @@ struct TodayView: View {
         .task { await loadProfileAndPlan() }
         .sheet(isPresented: $showWhySheet) { WhyThisPassageSheet(reference: dailyPlan?.scriptureRef ?? "", themes: whyThemes, reasons: whyReasons) }
         .sheet(isPresented: $presentPaywall) { PaywallView() }
+        .safeAreaInset(edge: .bottom) {
+            HStack {
+                Text("This week \(weeklyDone())/\(weeklyGoal()) ⭐️")
+                    .font(AppFontV3.caption())
+                    .monospacedDigit()
+                    .foregroundStyle(.secondary)
+                Spacer(minLength: 0)
+            }
+            .padding(.horizontal, S.xl)
+            .padding(.vertical, 8)
+            .background(.ultraThinMaterial)
+            .overlay(Divider(), alignment: .top)
+        }
     }
-    
+
+    private func weeklyDone() -> Int { Int(profile?.weeklyCompleted ?? 0) }
+    private func weeklyGoal() -> Int { Int(profile?.weeklyGoal ?? 0) }
+    private func streakLabel() -> String { "\(max(1, Int(profile?.streakCount ?? 0)))-day ⭐️" }
+
     private func short(_ s: String?) -> String {
         let txt = s ?? ""
-        if txt.count <= 24 { return txt }
-        return String(txt.prefix(24)) + "…"
+        if txt.count <= 48 { return txt }
+        return String(txt.prefix(48)) + "…"
     }
-    
+
     private func presentWhy(plan: DailyPlan, profile: Profile) {
-        // Use plan.crossrefs as themes; fall back to ScriptureStore themes for the reference
         var themes = plan.crossrefs ?? []
         if themes.isEmpty, let ref = plan.scriptureRef {
             let store = ScriptureStore()
-            if let p = store.passages.first(where: { $0.reference == ref }) {
-                themes = p.themes
-            }
+            if let p = store.passages.first(where: { $0.reference == ref }) { themes = p.themes }
         }
         whyThemes = themes
         let rs = ThemeReasoner.reasons(context: viewContext, profile: profile, since: 30, passageThemes: themes)
         whyReasons = rs
         showWhySheet = true
     }
-    
+
     private func regenerateBits(keeping plan: DailyPlan) {
         Task {
             guard let prof = plan.profile else { return }
@@ -122,74 +139,48 @@ struct TodayView: View {
             }
         }
     }
-    
+
     private func loadProfileAndPlan() async {
         let fetchRequest: NSFetchRequest<Profile> = Profile.fetchRequest()
         fetchRequest.fetchLimit = 1
-        
         do {
             let profiles = try viewContext.fetch(fetchRequest)
             if let firstProfile = profiles.first {
                 profile = firstProfile
-                
-                // Reset weekly progress if it's a new week
                 StreakService.resetWeeklyIfNewWeek(context: viewContext, profile: firstProfile)
-                
-                // Check if we already have a plan for today
                 let today = Calendar.current.startOfDay(for: Date())
                 let planFetchRequest: NSFetchRequest<DailyPlan> = DailyPlan.fetchRequest()
                 planFetchRequest.predicate = NSPredicate(format: "profile == %@ AND day == %@", firstProfile, today as NSDate)
                 planFetchRequest.fetchLimit = 1
-                
                 if let existingPlan = try? viewContext.fetch(planFetchRequest).first {
                     dailyPlan = existingPlan
                 } else {
-                    // Generate new plan with AI
                     isLoadingPlan = true
                     dailyPlan = await planService.generateTodayPlan(context: viewContext, profile: firstProfile)
                     isLoadingPlan = false
-                    
-                    // Save the context
                     try? viewContext.save()
                 }
             }
-        } catch {
-            print("Error loading profile: \(error)")
-        }
+        } catch { print("Error loading profile: \(error)") }
     }
-    
-    private func copyPrayer() {
-        if let prayer = dailyPlan?.prayer {
-            UIPasteboard.general.string = prayer
-            UINotificationFeedbackGenerator().notificationOccurred(.success)
-        }
-    }
-    
+
+    private func copyPrayer() { if let prayer = dailyPlan?.prayer { UIPasteboard.general.string = prayer; UINotificationFeedbackGenerator().notificationOccurred(.success) } }
+
     private func markChallengeComplete(_ plan: DailyPlan, profile: Profile) {
         plan.status = "done"
-        
-        // Update streak and weekly progress
         StreakService.markActive(context: viewContext, profile: profile)
         StreakService.incrementWeekly(context: viewContext, profile: profile)
-        
         try? viewContext.save()
-        
-        // Celebrate with haptics and confetti
         UINotificationFeedbackGenerator().notificationOccurred(.success)
         if !ReduceMotion.isOn { confetti.fire() } else {
             withAnimation(.easeInOut(duration: 0.5)) { didCelebrate.toggle() }
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) { didCelebrate.toggle() }
         }
     }
-    
-    private func markChallengeSkipped(_ plan: DailyPlan) {
-        plan.status = "skipped"
-        try? viewContext.save()
-        UINotificationFeedbackGenerator().notificationOccurred(.warning)
-    }
+
+    private func markChallengeSkipped(_ plan: DailyPlan) { plan.status = "skipped"; try? viewContext.save(); UINotificationFeedbackGenerator().notificationOccurred(.warning) }
 }
 
 #Preview {
-    TodayView()
-        .environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
+    TodayView().environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
 } 
