@@ -25,7 +25,7 @@ struct Lamp___Light__Lamp___LightApp: App {
     var body: some Scene {
         WindowGroup {
             TabView {
-                TodayView()
+                HomeV2View()
                     .tabItem {
                         Image(systemName: "sun.max.fill")
                         Text("Today")
@@ -60,7 +60,7 @@ struct Lamp___Light__Lamp___LightApp: App {
             .sheet(isPresented: $showOnboarding) { OnboardingView() }
             .task { await purchaseManager.load() }
         }
-        .onChange(of: scenePhase) { phase in
+        .onChange(of: scenePhase) { _, phase in
             if phase == .background {
                 BackgroundTasksManager.scheduleDaily()
             }
