@@ -37,10 +37,11 @@ struct OpenAIClient {
         cfg.timeoutIntervalForRequest = 10
         let session = URLSession(configuration: cfg)
 
-        let (data, resp) = try await session.data(for: req)
-        if let http = resp as? HTTPURLResponse, (200..<300).contains(http.statusCode) == false {
-            throw NSError(domain: "OpenAI", code: http.statusCode, userInfo: [NSLocalizedDescriptionKey: "HTTP \(http.statusCode)"])
+        let (data, response) = try await session.data(for: req)
+        if let httpResponse = response as? HTTPURLResponse, (200..<300).contains(httpResponse.statusCode) == false {
+            throw NSError(domain: "OpenAI", code: httpResponse.statusCode, userInfo: [NSLocalizedDescriptionKey: "HTTP \(httpResponse.statusCode)"])
         }
+        
         struct Resp: Codable {
             struct Choice: Codable { struct Msg: Codable { let content: String }; let message: Msg }
             let choices: [Choice]
