@@ -34,23 +34,21 @@ struct ScreenshotBoothView: View {
     }
 
     private func captureAndSave(title: String, subtitle: String, body: String) {
-        if #available(iOS 17.0, *) {
-            let view = VStack(alignment: .leading, spacing: 8) {
-                Text(title).font(AppFont.title())
-                Text(subtitle).font(AppFont.headline())
-                Text(body).font(AppFont.body())
-            }
-            .padding(24)
-            .frame(width: 1290, height: 2796)
-            .background(.white)
-            .cornerRadius(24)
+        let view = VStack(alignment: .leading, spacing: 8) {
+            Text(title).font(AppFont.title())
+            Text(subtitle).font(AppFont.headline())
+            Text(body).font(AppFont.body())
+        }
+        .padding(24)
+        .frame(width: 1290, height: 2796)
+        .background(.white)
+        .cornerRadius(24)
 
-            let renderer = ImageRenderer(content: view)
-            renderer.scale = 1
-            if let ui = renderer.uiImage {
-                UIImageWriteToSavedPhotosAlbum(ui, nil, nil, nil)
-                UINotificationFeedbackGenerator().notificationOccurred(.success)
-            }
+        let renderer = ImageRenderer(content: view)
+        renderer.scale = 1
+        if let ui = renderer.uiImage {
+            UIImageWriteToSavedPhotosAlbum(ui, nil, nil, nil)
+            UINotificationFeedbackGenerator().notificationOccurred(.success)
         }
     }
 } 

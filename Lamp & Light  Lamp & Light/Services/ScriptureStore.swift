@@ -1,11 +1,19 @@
 import Foundation
 
 struct Passage: Codable, Identifiable {
-    let id = UUID()
+    let id: UUID
     let reference: String
     let text: String
     let themes: [String]
     let crossrefs: [String]
+    
+    init(reference: String, text: String, themes: [String], crossrefs: [String]) {
+        self.id = UUID()
+        self.reference = reference
+        self.text = text
+        self.themes = themes
+        self.crossrefs = crossrefs
+    }
 }
 
 class ScriptureStore: ObservableObject {

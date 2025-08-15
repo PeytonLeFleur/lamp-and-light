@@ -29,7 +29,7 @@ class PlanService: ObservableObject {
 
         var allTags: [String] = []
         for entry in recentEntries {
-            let tags = (entry.tags as? [String]) ?? []
+            let tags = entry.tags ?? []
             allTags.append(contentsOf: tags)
         }
         let dedupedThemes = Array(Set(allTags)).prefix(5)

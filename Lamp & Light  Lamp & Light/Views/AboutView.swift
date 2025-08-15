@@ -76,7 +76,7 @@ struct AboutView: View {
         try? context.save()
         // Restart scene
         if let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-           let delegate = scene.delegate as? UIWindowSceneDelegate,
+           let _ = scene.delegate as? UIWindowSceneDelegate,
            let window = scene.windows.first {
             window.rootViewController = UIHostingController(rootView: AboutView().environment(\.managedObjectContext, context))
             window.makeKeyAndVisible()
